@@ -7,7 +7,7 @@ dotenv.config();
 
 // CONFIGURATION -----------------------------------------
 // Set this to "lib" or the number of the plugin (e.g. "01", "02")
-const PLUGIN_ID = "01";
+const PLUGIN_ID = process.argv[2] || "01";
 // -------------------------------------------------------
 
 const findEntryPoint = async (id) => {
@@ -106,15 +106,11 @@ const build = async () => {
       }
 
       if (finalVariable) {
-        // 2. Remove the variable declaration "var name = "
-        const varDeclarationRegex = new RegExp(`var\\s+${finalVariable}\\s*=\\s*`);
-        code = code.replace(varDeclarationRegex, "");
-
-        // 3. We do NOT append "; variable;" at the end because the user wants PURE object structure.
-        // If the code was just "{ ... };", removing "var x =" makes it "{ ... };"
-        // We should also ensure we don't end with a trailing semicolon if it was part of the var decl?
-        // Actually esbuild puts semicolon after value.
-        // "var x = { ... };" -> "{ ... };"
+        // 2. Wrap in IIFE to ensure we return the object and handle local scoping correctly
+        code = `(() => {
+${code}
+return ${finalVariable};
+})();`;
       }
 
       // Cleanup: Remove trailing semicolon and whitespace

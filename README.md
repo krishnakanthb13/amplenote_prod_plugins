@@ -6,18 +6,18 @@ This repository provides a framework for managing multiple plugins (`anp-*`), co
 ## Features
 
 - **Modular Development**: Split your plugin code into multiple files (`lib/`, `helpers/`) and bundle them automatically.
-- **Amplenote Bundler**: Custom `esbuild` configuration that outputs "Raw Object Literals" required by Amplenote (`{ insertText: ... }`), supporting ES Modules syntax during development.
+- **Amplenote Bundler**: Custom `esbuild` configuration that outputs "Raw Object Literals" wrapped in an IIFE, required by Amplenote (`(() => { return { ... } })()`), ensuring scope isolation and compatibility.
 - **Automation Skills**:
     - `anp_bundle`: Compiles plugins to `build/*.compiled.js`.
     - `anp_document`: Auto-generates documentation.
-    - `anp_refactor_optimize`: Splits monolithic files into modular components.
+    - `anp_refactor_optimize`: Splits monolithic files into modular components (`lib/`).
     - `anp_release_prep`: Automates release notes and licensing.
 
 ## Installation
 
 1. Clone this repo.
 2. Run `npm install` to set up dependencies.
-3. Configure your plugin ID in `esbuild.js` (e.g., `PLUGIN_ID = "01"`).
+3. (Optional) Configure default plugin ID in `esbuild.js`, or pass it via CLI.
 
 ## Usage
 
@@ -26,9 +26,9 @@ This repository provides a framework for managing multiple plugins (`anp-*`), co
 2. Write your code in `myplugin.js`. You can use `import`/`export` and standard ESM.
 3. Use the bundler to compile:
    ```bash
-   npm run build
+   npm run build -- 01
    ```
-   Or use the Agentic workflow: `/anp_bundle`.
+   (Defaults to "01" if no argument provided). Or use the Agentic workflow: `/anp_bundle`.
 
 ### Output
 The bundler produces a cleaner, minified file in `build/` that you can copy-paste directly into your Amplenote Plugin Note.
