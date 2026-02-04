@@ -1,3 +1,8 @@
+/**
+ * Formats the current date/time digitally based on user settings.
+ * @param {object} app - The Amplenote app object.
+ * @returns {string} - The formatted date string.
+ */
 export function digital(app) {
     const d = new Date(), s = app.settings;
     const format = String(s["timestamp for digital - structure"] || "Y-m-d H:n:s");

@@ -1,3 +1,8 @@
+/**
+ * Converts current time to a verbose text description (e.g., "It's half past Twelve").
+ * @param {object} app - The Amplenote app object.
+ * @returns {string} - The verbose time string.
+ */
 export function text(app) {
     const d = new Date(), h = d.getHours(), m = d.getMinutes();
     const H = ["Twelve", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"];

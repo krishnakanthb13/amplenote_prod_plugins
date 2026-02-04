@@ -1,3 +1,8 @@
+/**
+ * Generates an analog clock SVG and inserts it as a media image.
+ * @param {object} app - The Amplenote app object.
+ * @returns {Promise<string>} - Returns an empty string upon success (to prevent double insertion).
+ */
 export async function analog(app) {
     if (!app.context.noteUUID) return "Error: Open a note to insert image.";
 

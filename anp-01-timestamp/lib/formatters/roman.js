@@ -1,3 +1,8 @@
+/**
+ * Formats the current date/time using Roman numerals.
+ * @param {object} app - The Amplenote app object.
+ * @returns {string} - The date formatted with Roman numerals.
+ */
 export function roman(app) {
     const d = new Date();
     const r = n => {
