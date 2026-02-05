@@ -1,0 +1,9 @@
+name: Timestamp
+icon: update
+description: Different types of Timestamps. Every possibility that you can think of. You can modify them based on your needs using the info given in the below details using the different details in the below (View note Link).
+instructions: Using the Slash command "/Timestamp" you can insert different types of timestamps in your note. To convert the unix to readable timestamp, select the unix timestamp and then in the dropdown select "Convert Unix to Date Time".
+setting: timestamp for digital - structure
+setting: timestamp text - pre script
+setting: timestamp text - post script
+setting: timestamp analog - theme - dark / light / neon
+setting: timestamp analog - post script
