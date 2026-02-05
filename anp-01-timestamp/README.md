@@ -6,18 +6,32 @@ A versatile timestamp generator for Amplenote, supporting Digital, Analog, Roman
 
 ## Installation
 
-1. Copy the code from `build/timestamp.compiled.js`.
-2. Paste into an Amplenote Plugin Note.
+1. **Create a Plugin Note**: Create a new note in Amplenote (e.g., named "Timestamp Plugin").
+2. **Setup Metadata Table**: At the very top of the note, create a table with the following structure:
 
-## Settings
+| Field | Value |
+| :--- | :--- |
+| name | Timestamp |
+| description | Different types of Timestamps. Every possibility that you can think of. You can modify them based on your needs using the info given in the below details using the different details in the below (View note Link). |
+| icon | update |
+| settings | timestamp for digital - structure |
+| settings | timestamp analog - theme - dark / light / neon |
+| settings | timestamp analog - post script |
+| settings | timestamp text - pre script |
+| settings | timestamp text - post script |
+
+3. **Insert Code Block**: Below the table, create a single Javascript code block.
+4. **Paste Compiled Code**: Copy the content from `build/timestamp.compiled.js` and paste it inside the code block.
+5. **Activate**: Go to **Account Settings** -> **Plugins**, and select the note you just created.
+
+## Settings Explained
 
 | Setting Name | Default | Description |
 | :--- | :--- | :--- |
-| `timestamp for digital - structure` | `Y-m-d H:n:s` | Format string for Digital timestamps. Keys: Y, y, m, d, H, n, s, A. |
-| `timestamp analog - theme - dark / light / neon` | `dark` | Visual theme for the Analog clock. |
+| `timestamp for digital - structure` | `Y-m-d H:n:s` | Format string for Digital timestamps. Keys: Y (Year), m (Month), d (Day), H (Hour), n (Min), s (Sec), A (AM/PM). |
+| `timestamp analog - theme` | `dark` | Visual theme for the Analog clock (`dark`, `light`, or `neon`). |
 | `timestamp analog - post script` | *(empty)* | Text to append after the Analog clock image. |
-| `timestamp text - pre script` | *(empty)* | Text to prepend to the Text timestamp. |
-| `timestamp text - post script` | *(empty)* | Text to append to the Text timestamp. |
+| `timestamp text - pre/post script` | *(empty)* | Text to wrap around the natural text timestamp. |
 
 ## Usage
 
