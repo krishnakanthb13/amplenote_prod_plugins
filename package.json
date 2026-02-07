@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "dayjs": "^1.11.19",
     "dotenv": "^16.0.3",
     "esbuild": "^0.27.2",
     "isomorphic-fetch": "^3.0.0"
