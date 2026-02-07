@@ -28,27 +28,21 @@ A versatile timestamp generator for Amplenote, supporting Digital, Analog, Roman
 
 | Setting Name | Default | Description |
 | :--- | :--- | :--- |
-| `timestamp for digital - structure` | `Y-m-d H:n:s` | Format string for Digital timestamps. Keys: Y (Year), m (Month), d (Day), H (Hour), n (Min), s (Sec), A (AM/PM). |
+| `timestamp for digital - structure` | `YYYY-MM-DD HH:mm:ss` | Format string for Digital timestamps. Powered by [Day.js](https://day.js.org/docs/en/display/format). [See Local Token Guide](./dayjs.md). |
 | `timestamp analog - theme` | `dark` | Visual theme for the Analog clock (`dark`, `light`, or `neon`). |
-| `timestamp analog - post script` | *(empty)* | Text to append after the Analog clock image. |
-| `timestamp text - pre/post script` | *(empty)* | Text to wrap around the natural text timestamp. |
+| `timestamp analog - post script` | *(empty)* | Text to append immediately after the Analog clock image. |
+| `timestamp text - pre/post script` | *(empty)* | Custom text to wrap around the natural language timestamp. |
 
-## Usage
+---
 
-### Insert Text Commands
-- **Digital**: Inserts a formatted date string (e.g., `2026-02-05 01:30:00`).
-- **Roman**: Inserts the date/time using Roman numerals (e.g., `V/II/MMXXVI`).
-- **Analog**: Inserts a live-generated SVG analog clock image.
-- **Text**: Inserts a verbose "human" time (e.g., "It's half past One").
-- **Unix**: Inserts the current Unix timestamp.
+## Technical Architecture
 
-### Replace Text Commands
-- **UnixToDateTime**: Select a Unix timestamp and run this to convert it to a readable local date string.
+This plugin is built with a modular ESM (ECMAScript Module) architecture:
+- **Formatters** (`lib/formatters/`): Independent logic for each time display type.
+- **Replacers** (`lib/replacers/`): Selection-based transformation logic.
+- **Bundling**: Uses `esbuild` to compile dependencies (like Day.js) into a single, optimized browser-compatible artifact.
 
-## Technical Details
-
-This plugin follows a modular structure:
-- `lib/formatters/`: Contains logic for generating different timestamp formats.
-- `lib/replacers/`: Contains logic for text replacement actions.
-
-The project uses `esbuild` to bundle these modules into a single artifact compatible with Amplenote's environment.
+For deep dives into the implementation and design decisions, see:
+- [Code Documentation](./CODE_DOCUMENTATION.md)
+- [Design Philosophy](./DESIGN_PHILOSOPHY.md)
+- [Day.js Token Reference](./dayjs.md)

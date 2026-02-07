@@ -10,6 +10,12 @@ import { text } from './lib/formatters/text.js';
 import { unix } from './lib/formatters/unix.js';
 import { unixToDateTime } from './lib/replacers/unix_to_datetime.js';
 
+/**
+ * The main plugin export conforming to the Amplenote Plugin API.
+ * @type {object}
+ * @property {object} insertText - Methods for inserting various timestamp formats.
+ * @property {object} replaceText - Methods for transforming selected text (Unix to Local).
+ */
 export default {
     insertText: {
         "Digital": digital,

@@ -1,3 +1,6 @@
+
+-- Metadata table --
+
 name: Timestamp
 icon: update
 description: Different types of Timestamps. Every possibility that you can think of. You can modify them based on your needs using the info given in the below details using the different details in the below (View note Link).
@@ -7,3 +10,27 @@ setting: timestamp text - pre script
 setting: timestamp text - post script
 setting: timestamp analog - theme - dark / light / neon
 setting: timestamp analog - post script
+
+-- Manual Testing --
+
+Open or Create a random testing note:
+1. Type `/Timestamp: Digital`, and hit Enter/Return > Check the Output.
+2. Type `/Timestamp: Roman`, and hit Enter/Return > Check the Output.
+3. Type `/Timestamp: Analog`, and hit Enter/Return > Check the Output.
+4. Type `/Timestamp: Test`, and hit Enter/Return > Check the Output.
+5. Type `/Timestamp: Unix`, and hit Enter/Return > Check the Output.
+
+Click on the down arrow, beside your username (left top of Amplenote).
+> Account Settings > Plugins > Timestamp > ⚙ Gear Icon > 
+1. Update > setting: timestamp for digital - structure > Rerun Digital > Check the Output.
+2. Update > setting: timestamp text - pre script > Rerun Roman > Check the Output.
+3. Update > setting: timestamp text - post script > Rerun Test > Check the Output.
+4. Update > setting: timestamp analog - theme - dark / light / neon > Rerun Analog > Check the Output.
+5. Update > setting: timestamp analog - post script > Rerun Analog > Check the Output.
+
+-- Future Scope --
+
+- [x] Use Standard ISO8601 Formatting.
+- [ ] Multiple Digital options - with different date-time formatting.
+
+-- END --
