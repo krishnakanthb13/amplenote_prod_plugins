@@ -4,13 +4,13 @@
  * @returns {Promise<void>} - Resolves after clearing history.
  */
 export async function clearAuditHistory(app) {
-  const confirm = await app.prompt("Clear all dice audit history?", {
-    inputs: [{ label: "Type 'YES' to confirm", type: "string" }]
+  const confirm = await app.prompt("Confirm Deletion", {
+    inputs: [{ label: "Type 'YES' to clear all dice audit history", type: "string" }]
   });
-  if (confirm && confirm[0] === "YES") {
+  if (confirm && confirm.trim().toUpperCase() === "YES") {
     const uuid = await app.settings["Dice_Audit_UUID [Do not Edit!]"];
     if (uuid) {
-      await app.setNoteContent({ uuid }, "");
+      await app.replaceNoteContent({ uuid }, "");
       app.alert("Audit history cleared!");
     } else {
       app.alert("No audit note found to clear.");

@@ -39,7 +39,7 @@ export default async function (app) {
 	  const numDicez = existingSetting;
 
 	  // Prompt user with pre-filled inputs
-	  const result = await app.prompt("Fudge/Fate, Roll the Dice!", {
+	  const result = await app.prompt("Roll Fudge/Fate Dice", {
 		inputs: [
 		  { label: "Number of Dice", type: "string", value: numDicez || 4 },
 		],

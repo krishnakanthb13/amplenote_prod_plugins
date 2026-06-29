@@ -7,11 +7,11 @@ import { getNoteUUID } from "./utils.js";
 export default async function (app) {
 
   // Prompt user with pre-filled inputs
-  const result = await app.prompt("Ask Sai Baba. Think deeply about the problem you wish to solve and sincerely seek Sai Baba's guidance. Ask him to suggest a single number between 1 and 720 as an answer. A number will intuitively come to your mind. Type this number into the provided answer box. This number you have intuitively chosen represents Shirdi Sai Baba's answer to your query. Ensure the number you enter falls within the range of 1 to 720. The corresponding answer from Sai Baba will be offering clear and concise guidance.", {
+  const result = await app.prompt("Seek Shirdi Sai Baba's Guidance. Reflect deeply on your question, then let a number between 1 and 720 intuitively enter your mind. Type that number below to receive his answer.", {
 	inputs: [
-	  { label: "Ask Sai Baba a question.", placeholder: ">>> Keep questions simple, if you want to keep it in your mind, you can type something which you only can connect back too.", type: "text" },
-	  { label: "Enter a Number.", placeholder: "Number between 1-720", type: "string" },
-	  { label: "Random.", type: "checkbox", value: false }
+	  { label: "Your Question", placeholder: "Reflect deeply on your question. You can type it here or keep it in mind.", type: "text" },
+	  { label: "Enter an Intuitive Number (1-720)", placeholder: "Type a number from 1 to 720 that comes to mind", type: "string" },
+	  { label: "Select Random Number", type: "checkbox", value: false }
 	],
   });
   

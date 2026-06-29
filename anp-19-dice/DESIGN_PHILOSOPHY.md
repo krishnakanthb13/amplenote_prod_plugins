@@ -18,7 +18,8 @@ Since Amplenote executes plugins inside an `eval()` context, there is a risk of 
 
 ### 3. Polish & User Intent Affirmation
 We believe user experience is in the details.
-- **Philosophy**: Destructive commands (like clearing the audit trail) must require explicit keyword verification (`"YES"` confirmation) to avoid accidental loss. Helpful shortcuts (like viewing roll history) should verify that the target note has data before navigating, saving the user from blank screens.
+- **Philosophy**: Destructive commands (like clearing the audit trail) must require explicit keyword verification (typing `"YES"` confirmation) with highly descriptive prompts to avoid accidental loss. Helpful shortcuts (like viewing roll history) should verify that the target note has data before navigating.
+- **Polished Prompts**: All user prompts are phrased clearly, utilizing intuitive input labels, helpful placeholders, and descriptive titles. Settings-recall menus clearly state that previous settings are being reloaded to optimize the user flow.
 
 ### 4. Modular Separation of Concerns
 Each gaming system or rolling method has unique math and structures.

@@ -27,19 +27,19 @@ export default async function (app) {
 
 
 	  // Prompt user with pre-filled inputs
-	  result = await app.prompt("Fantasy AGE Stunt - Roll All At Once!", {
+	  result = await app.prompt("Roll Fantasy AGE Stunts (All Players)", {
 		inputs: [
 		  { label: "Number of Players", type: "string", value: playerCountz },
-		  { label: "Number of Characters Per Player", type: "string", value: charactersPerPlayerz },
+		  { label: "Characters Per Player", type: "string", value: charactersPerPlayerz },
 		],
 	  });
 	  
 	} else {
 	  // Prompt user with pre-filled inputs
-	  result = await app.prompt("Fantasy AGE Stunt - Roll All At Once!", {
+	  result = await app.prompt("Roll Fantasy AGE Stunts (All Players)", {
 		inputs: [
 		  { label: "Number of Players", type: "string", value: 3 },
-		  { label: "Number of Characters Per Player", type: "string", value: 2 },
+		  { label: "Characters Per Player", type: "string", value: 2 },
 		],
 	  });		
 	}

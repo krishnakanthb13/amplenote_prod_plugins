@@ -37,41 +37,41 @@ export default async function (app) {
       if ([4, 6, 8, 11, 12].includes(index)) return String(value).toLowerCase() === "true";
       return value;
     });
-    result = await app.prompt("Roll the Dice! (Previous Roll is remembered)", {
+    result = await app.prompt("Configure Your Dice Roll (Recall settings)", {
       inputs: [
         { label: "Number of Dice", type: "string", value: numDicez },
         { label: "Number of Faces", type: "string", value: facesz },
-        { label: "Minimum Number (Limit)", type: "string", value: minz },
-        { label: "Maximum Number (Limit)", type: "string", value: maxz },
-        { label: "Keep Highest Roll (Drop the remaining)", type: "checkbox", value: keepHighestz },
-        { label: "Keep Highest Roll Count", type: "string", value: keepCountz },
-        { label: "Drop Highest Roll (keep the remaining)", type: "checkbox", value: dropHighestz },
-        { label: "Drop Highest Roll Count", type: "string", value: dropCountz },
-        { label: "Explode (An additional Die)", type: "checkbox", value: explodez },
-        { label: "Explode Target", type: "string", value: explodeTargetz },
-        { label: "Sort the output", type: "select", options: [{ label: "None", value: 1 }, { label: "Ascending", value: 2 }, { label: "Descending", value: 3 }], value: sortOptionz || 1 },
-        { label: "Unique (Every Die is Unique)", type: "checkbox", value: uniquez },
-        { label: "Navigate to the Looked Up Note", type: "checkbox", value: navigateToNotez },
-        { label: "Look Up in your Notes (Sorted By)", type: "select", options: [{ label: "None", value: 5 }, { label: "Name", value: 1 }, { label: "Created", value: 2 }, { label: "Modified", value: 3 }, { label: "UUID", value: 6 }, { label: "Tags", value: 7 }, { label: "Random", value: 4 }], value: lookUpz || 5 }
+        { label: "Minimum Roll Limit", type: "string", value: minz },
+        { label: "Maximum Roll Limit", type: "string", value: maxz },
+        { label: "Keep Highest Rolls (Discard the rest)", type: "checkbox", value: keepHighestz },
+        { label: "Count of Highest Rolls to Keep", type: "string", value: keepCountz },
+        { label: "Drop Highest Rolls (Keep the rest)", type: "checkbox", value: dropHighestz },
+        { label: "Count of Highest Rolls to Drop", type: "string", value: dropCountz },
+        { label: "Exploding Dice (Roll again on max value)", type: "checkbox", value: explodez },
+        { label: "Explode Target Value", type: "string", value: explodeTargetz },
+        { label: "Sort Results", type: "select", options: [{ label: "None", value: 1 }, { label: "Ascending", value: 2 }, { label: "Descending", value: 3 }], value: sortOptionz || 1 },
+        { label: "Unique Results Only (No duplicates)", type: "checkbox", value: uniquez },
+        { label: "Open Retrieved Note Automatically", type: "checkbox", value: navigateToNotez },
+        { label: "Lookup Note (Order by)", type: "select", options: [{ label: "None", value: 5 }, { label: "Name", value: 1 }, { label: "Created", value: 2 }, { label: "Modified", value: 3 }, { label: "UUID", value: 6 }, { label: "Tags", value: 7 }, { label: "Random", value: 4 }], value: lookUpz || 5 }
       ]
     });
   } else {
-    result = await app.prompt("Roll the Dice!", {
+    result = await app.prompt("Configure Your Dice Roll", {
       inputs: [
         { label: "Number of Dice", type: "string" },
         { label: "Number of Faces", type: "string" },
-        { label: "Minimum Number", type: "string" },
-        { label: "Maximum Number", type: "string" },
-        { label: "Keep Highest Roll", type: "checkbox" },
-        { label: "Keep Highest Roll Count", type: "string" },
-        { label: "Drop Highest Roll", type: "checkbox" },
-        { label: "Drop Highest Roll Count", type: "string" },
-        { label: "Explode", type: "checkbox" },
-        { label: "Explode Target", type: "string" },
-        { label: "Sort the output", type: "select", options: [{ label: "None", value: 1 }, { label: "Ascending", value: 2 }, { label: "Descending", value: 3 }], value: 1 },
-        { label: "Unique", type: "checkbox" },
-        { label: "Navigate to the Looked Up Note", type: "checkbox", value: false },
-        { label: "Look Up in your Notes (Sorted By)", type: "select", options: [{ label: "None", value: 5 }, { label: "Name", value: 1 }, { label: "Created", value: 2 }, { label: "Modified", value: 3 }, { label: "UUID", value: 6 }, { label: "Tags", value: 7 }, { label: "Random", value: 4 }], value: 5 }
+        { label: "Minimum Roll Limit", type: "string" },
+        { label: "Maximum Roll Limit", type: "string" },
+        { label: "Keep Highest Rolls (Discard the rest)", type: "checkbox" },
+        { label: "Count of Highest Rolls to Keep", type: "string" },
+        { label: "Drop Highest Rolls (Keep the rest)", type: "checkbox" },
+        { label: "Count of Highest Rolls to Drop", type: "string" },
+        { label: "Exploding Dice (Roll again on max value)", type: "checkbox" },
+        { label: "Explode Target Value", type: "string" },
+        { label: "Sort Results", type: "select", options: [{ label: "None", value: 1 }, { label: "Ascending", value: 2 }, { label: "Descending", value: 3 }], value: 1 },
+        { label: "Unique Results Only (No duplicates)", type: "checkbox" },
+        { label: "Open Retrieved Note Automatically", type: "checkbox", value: false },
+        { label: "Lookup Note (Order by)", type: "select", options: [{ label: "None", value: 5 }, { label: "Name", value: 1 }, { label: "Created", value: 2 }, { label: "Modified", value: 3 }, { label: "UUID", value: 6 }, { label: "Tags", value: 7 }, { label: "Random", value: 4 }], value: 5 }
       ]
     });
   }

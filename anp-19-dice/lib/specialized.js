@@ -17,12 +17,12 @@ export default async function (app) {
 	  .split(",");
 
   // Prompt user with pre-filled inputs - 4
-  const result = await app.prompt("Select the approprate parameters!", {
+  const result = await app.prompt("Configure Specialized Dice Roll", {
 	inputs: [
         { label: "Number of Dice", type: "string", value: numDicez || 5 },
-        { label: "Select the Specialized Dice.", type: "select", options: [ { label: "Sicherman Dice", value: "sicherman" }, { label: "Intransitive Dice", value: "intransitive" }, { label: "Poker Dice", value: "poker" } ], value: specializedDicez || "poker" },
-        { label: "Select the Poker Variation.", type: "select", options: [ { label: "Standard", value: "standard" }, { label: "Numeric", value: "numeric" }, { label: "Crown", value: "crown" } ], value: pokerVariz || "standard" },
-        { label: "Add probabilities", type: "checkbox", value: addProbz || false }
+        { label: "Specialized Dice Type", type: "select", options: [ { label: "Sicherman Dice", value: "sicherman" }, { label: "Intransitive Dice", value: "intransitive" }, { label: "Poker Dice", value: "poker" } ], value: specializedDicez || "poker" },
+        { label: "Poker Variation (If Poker selected)", type: "select", options: [ { label: "Standard", value: "standard" }, { label: "Numeric", value: "numeric" }, { label: "Crown", value: "crown" } ], value: pokerVariz || "standard" },
+        { label: "Calculate & Show Probabilities", type: "checkbox", value: addProbz || false }
 	],
   });
 

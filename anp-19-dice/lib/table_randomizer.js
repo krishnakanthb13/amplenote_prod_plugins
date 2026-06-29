@@ -193,17 +193,17 @@ export default async function (app, noteUUID) {
 
 	// Prompt the user to select tags and choose options
 	const result = await app.prompt(
-		"Fill in or Update the Details, based on your requirments.",
+		"Configure Table Randomizer",
 		{
 			inputs: [
 				{
-					label: "Select the Table - To Randomize!",
+					label: "Choose Table to Randomize",
 					type: "radio",
 					options: numberOfTables,
 					value: "All"
 				},
 				{ label: "Select number of Randomizations.", type: "string", value: existingSetting || 3 },
-				{ label: "The Table has Headers", type: "checkbox", value: true }
+				{ label: "First row is header (skip from selection)", type: "checkbox", value: true }
 			]
 		}
 	);
@@ -435,7 +435,7 @@ export default async function (app, noteUUID) {
 
 		const auditReport = `- <mark>Table - Randomizer:</mark> ***When:** ${YYMMDD}_${HHMMSS}*; **UUID:** ${noteUUID} ; <mark>**Data:**</mark> ${finalResultz}`;
 		await app.insertNoteContent({ uuid: auditnoteUUID }, auditReport);
-		
+
 		const safeUUID = String(auditnoteUUID);
 		await app.navigate(`https://www.amplenote.com/notes/${safeUUID}`);
 

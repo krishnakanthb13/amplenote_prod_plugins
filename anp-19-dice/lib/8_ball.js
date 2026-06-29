@@ -7,9 +7,9 @@ import { getNoteUUID } from "./utils.js";
 export default async function (app) {
 
   // Prompt user with pre-filled inputs
-  const result = await app.prompt("Shake the 8 Ball!", {
+  const result = await app.prompt("Consult the Magic 8-Ball", {
 	inputs: [
-	  { label: "Ask a Question", placeholder: ">>> Keep questions simple and direct, focus on a single issue, and use yes/no or should I/should I not formats. Eg: Will I find love this year? / Will I win the lottery? / Will it rain tomorrow?", type: "text" }
+	  { label: "Your Question", placeholder: "Ask a direct yes/no question (e.g., \"Will I achieve my goal today?\")", type: "text" }
 	],
   });
   

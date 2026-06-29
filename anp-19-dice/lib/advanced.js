@@ -219,10 +219,10 @@ export default async function (app) {
 	const examplez = `1d2,\n3d4 + 3,\n1d12 + 1d10 + 5,\n3d4+3d4-(3d4 * 1d4) - 2^1d7`;
 
 	  // Prompt user with pre-filled inputs
-	  const result = await app.prompt("Add / Modify the Formulas that you want to run the Dice for.", {
+	  const result = await app.prompt("Evaluate Custom Dice Formulas", {
 		inputs: [
-		  { label: "Single Dice Formula", type: "string", value: `1d2` },
-		  { label: "Multiple Dice Formulas", type: "text", value: `${examplez}` },
+		  { label: "Single Roll Formula (e.g., 2d6 + 5)", type: "string", value: `1d2` },
+		  { label: "Batch Roll Formulas (One per line or comma-separated)", type: "text", value: `${examplez}` },
 		],
 	  });
 
