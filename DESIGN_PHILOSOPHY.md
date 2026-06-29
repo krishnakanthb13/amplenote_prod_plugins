@@ -19,3 +19,9 @@ We treat the `eval` context as a "compile target", not a "source format".
     -   It has its own `lib/`, `build/`, and `Tests/`.
     -   **Why?** Prevents "Dependency Hell" where changing a shared utility for Plugin A breaks Plugin B.
     -   **Trade-off**: Some code duplication, but maximum stability per plugin.
+6.  **Offline & Sync Resilience**:
+    -   Amplenote may create note links with temporary `local-` prefixes before syncing them to the server.
+    -   Plugins must implement lookup layers (such as resolving temporary UUIDs to final synced online UUIDs) to prevent broken links or duplicate note creation during sync transitions.
+7.  **User Intent Affirmation & Safety**:
+    -   Destructive actions (e.g., clearing audit logs) must require explicit user confirmation (e.g. typing a verification keyword).
+    -   Interactive prompts should clearly state when cached/previous inputs are being reloaded.

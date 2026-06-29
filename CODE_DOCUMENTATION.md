@@ -25,12 +25,38 @@ After bundling (`write: false`), the build script parses the output string:
 4.  Strips trailing semicolons/whitespace.
 5.  **Result**: A clean, readable, scope-safe object expression ready for `eval()`. The output is **not** minified.
 
-## Folders
--   **anp-xx-name**:
-    -   Each folder is a fully isolated project.
-    -   **Entry**: `[name].js`
-    -   **Output**: `build/[name].compiled.js` (ready for copy-paste).
-    -   **Tests**: `Tests/[name].test.js`.
+## Folders & Production Plugins
+
+Each folder under `anp-xx-name` is a fully isolated project containing its own modules, entry point, build outputs, and tests.
+
+### 1. `anp-01-timestamp`
+*   **Entry**: `timestamp.js`
+*   **Output**: `build/timestamp.compiled.js`
+*   **Documentation**: Detailed module definitions are available in [anp-01-timestamp/CODE_DOCUMENTATION.md](file:///c:/Users/ADMIN/OneDrive/Documents/GitHub/amplenote_prod_plugins/anp-01-timestamp/CODE_DOCUMENTATION.md).
+*   **Key Modules**:
+    *   `lib/formatters/digital.js`: Configurable token-based formatting powered by Day.js with clash mitigation.
+    *   `lib/formatters/analog.js`: SVG clock generator converting vectors to base64 DataURLs.
+    *   `lib/formatters/roman.js` & `lib/formatters/text.js`: Custom Roman Numeral and natural text date/time convertors.
+
+### 2. `anp-02-metadata`
+*   **Entry**: `metadata.js`
+*   **Output**: `build/metadata.compiled.js`
+*   **Key Modules**:
+    *   `lib/main.js`: Main plugin option driver interfacing with the user.
+    *   `lib/filters.js`: Configurable filtering functions for searching and selecting specific note scopes/tags.
+    *   `lib/formatter.js`: Code responsible for formatting and dumping notes and tag paths.
+    *   `lib/actions.js`: Executes Amplenote-side write operations.
+
+### 3. `anp-19-dice`
+*   **Entry**: `dice.js`
+*   **Output**: `build/dice.compiled.js`
+*   **Documentation**: Detailed module definitions are available in [anp-19-dice/CODE_DOCUMENTATION.md](file:///c:/Users/ADMIN/OneDrive/Documents/GitHub/amplenote_prod_plugins/anp-19-dice/CODE_DOCUMENTATION.md).
+*   **Key Modules**:
+    *   `lib/basic.js` & `lib/advanced.js`: Prompters, Fisher-Yates shuffle unique selectors, and a recursive descent mathematical parser for advanced dice notations.
+    *   `lib/fudge_fate.js`, `lib/fantasy_age_stunt_*.js`, & `lib/dice_pool.js`: RPG-specific systems (Fate, Fantasy AGE Stunt system, and shadowrun/WoD dice pools).
+    *   `lib/8_ball.js`, `lib/ask_sai_baba.js`, & `lib/tarot.js`: Divination modules and oracles (Magic 8-Ball, Sai Baba, Tarot spreads).
+    *   `lib/weighted_random.js`, `lib/decision_matrix.js`, & `lib/name_generator.js`: Decision helper tools and creative generators.
+    *   `lib/table_randomizer.js`: A note-level option that extracts and randomizes row combinations from markdown tables.
 
 ## Configuration Files
 -   `eslint.config.js`: Flat ESLint config with Amplenote/browser + Jest globals; ignores `**/build/**`.

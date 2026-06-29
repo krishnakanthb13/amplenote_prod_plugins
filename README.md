@@ -40,6 +40,7 @@ The bundler produces a clean, readable, single-file object expression in `[plugi
 | :--- | :--- | :--- |
 | `anp-01-timestamp` | `timestamp.js` | Insert and convert timestamps with multiple formats (digital, analog, roman, unix, text). |
 | `anp-02-metadata` | `metadata.js` | Generate, filter, and export comprehensive note metadata reports. |
+| `anp-19-dice` | `index.js` | Roll basic & advanced dice, run game-system checks, access oracles/tarot, generate names/decisions, and pick random elements from notes. |
 
 ## Technologies
 * [esbuild](https://esbuild.github.io/) (custom Amplenote object-literal wrapper)
