@@ -16,6 +16,7 @@ The most complex formatter, responsible for flexible, token-based date strings.
 ### 2. Analog Formatter (`lib/formatters/analog.js`)
 Generates an SVG representation of a clock.
 - **Process**: Calculates angles for hands -> Generates SVG string -> Converts to DataURL -> Draws to Canvas -> Generates PNG -> Uploads to Amplenote Media.
+- **Insertion**: Inserts the generated clock image directly at the user's cursor position in the editor using `app.context.replaceSelection` instead of appending it to the end of the note.
 - **SVG Metadata**: B64 encodes the original SVG into the image URL query params to preserve the vector definition for future reference.
 
 ### 3. Roman Formatter (`lib/formatters/roman.js`)

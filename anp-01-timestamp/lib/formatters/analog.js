@@ -52,10 +52,7 @@ export async function analog(app) {
             const post = app.settings["timestamp analog - post script"] || "";
             const markdown = `![${now.toLocaleTimeString()}](${url}?text=${encoded})${post ? " " + post : ""}.`;
 
-            // Explicit insertion at end of note.
-            // Returning "" (empty string) instead of null to prevent auto-insertion.
-            await app.insertNoteContent({ uuid: app.context.noteUUID }, markdown, { atEnd: true });
-            // app.context.replaceSelection(`![${now.toLocaleTimeString()}](${markdown})`);
+            await app.context.replaceSelection(markdown);
         } else {
             app.alert("Upload Failed");
         }

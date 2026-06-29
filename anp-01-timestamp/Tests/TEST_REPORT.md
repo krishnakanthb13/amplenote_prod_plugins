@@ -23,12 +23,12 @@ Executed unit tests for the core formatting and replacement logic. The test suit
 - **UnixToDateTime Replacer**: ✅ PASS
   - Verified bidirectional conversion logic.
   - Verified error handling for invalid strings.
-- **Analog Formatter**: ⚠️ SKIPPED
-  - Requires `canvas` node module for full verification of image generation in Jest/JSDOM. Logic is isolated but untestable in current environment.
+- **Analog Formatter**: ✅ PASS
+  - Mocked `FileReader`, `Image`, and `canvas` element APIs within a JSDOM unit test environment.
+  - Verified image creation, markdown formatting, attachment, and cursor insertion via `app.context.replaceSelection`.
 
 ### Regression Analysis
 No regressions detected. The refactoring to modular ESM has preserved functionality.
 
 ### Recommendations
-1.  **Mock Canvas**: Integrating `jest-canvas-mock` would allow testing the Analog clock generation flow.
-2.  **Snapshot Testing**: Consider adding snapshots for the Roman numeral output to catch subtle format changes.
+1.  **Snapshot Testing**: Consider adding snapshots for the Roman numeral output to catch subtle format changes.

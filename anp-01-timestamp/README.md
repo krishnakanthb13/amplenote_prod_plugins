@@ -29,9 +29,12 @@ A versatile timestamp generator for Amplenote, supporting Digital, Analog, Roman
 | Setting Name | Default | Description |
 | :--- | :--- | :--- |
 | `timestamp for digital - structure` | `YYYY-MM-DD HH:mm:ss` | Format string for Digital timestamps. Powered by [Day.js](https://day.js.org/docs/en/display/format). [See Local Token Guide](./dayjs.md). |
-| `timestamp analog - theme` | `dark` | Visual theme for the Analog clock (`dark`, `light`, or `neon`). |
+| `timestamp analog - theme - dark / light / neon` | `dark` | Visual theme for the Analog clock (`dark`, `light`, or `neon`). |
 | `timestamp analog - post script` | *(empty)* | Text to append immediately after the Analog clock image. |
 | `timestamp text - pre/post script` | *(empty)* | Custom text to wrap around the natural language timestamp. |
+
+> [!NOTE]
+> The Analog clock plugin uploads a generated clock image and inserts it at the current cursor position in your editor.
 
 ---
 
