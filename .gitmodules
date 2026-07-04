@@ -1,3 +1,6 @@
 [submodule "anp-19-dice"]
 	path = anp-19-dice
 	url = https://github.com/krishnakanthb13/anp-19-dice
+[submodule "anp-01-timestamp"]
+	path = anp-01-timestamp
+	url = https://github.com/krishnakanthb13/anp-01-timestamp

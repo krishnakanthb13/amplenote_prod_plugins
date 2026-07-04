@@ -43,4 +43,10 @@ The bundler produces a clean, readable, single-file object expression in `[plugi
 ## License
 GPL v3 - See [LICENSE](LICENSE) for details.
 Copyright (C) 2026 Krishna Kanth B
+
+---
+
+## Plugins 
+
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
+- [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
