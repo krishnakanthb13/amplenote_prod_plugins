@@ -34,14 +34,6 @@ The bundler produces a clean, readable, single-file object expression in `[plugi
 ### The Template
 `lib/plugin.js` is a minimal starter plugin (with `noteOption`/`insertText`/`replaceText` stubs). Build it with `npm run build -- lib` to use it as a starting point for a new plugin.
 
-## Plugins
-
-| Plugin | Entry | Description |
-| :--- | :--- | :--- |
-| `anp-01-timestamp` | `timestamp.js` | Insert and convert timestamps with multiple formats (digital, analog, roman, unix, text). |
-| `anp-02-metadata` | `metadata.js` | Generate, filter, and export comprehensive note metadata reports. |
-| `anp-19-dice` | `index.js` | Roll basic & advanced dice, run game-system checks, access oracles/tarot, generate names/decisions, and pick random elements from notes. |
-
 ## Technologies
 * [esbuild](https://esbuild.github.io/) (custom Amplenote object-literal wrapper)
 * [Day.js](https://day.js.org/) (date/time formatting, used by `anp-01-timestamp`)
@@ -51,3 +43,4 @@ The bundler produces a clean, readable, single-file object expression in `[plugi
 ## License
 GPL v3 - See [LICENSE](LICENSE) for details.
 Copyright (C) 2026 Krishna Kanth B
+- [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
