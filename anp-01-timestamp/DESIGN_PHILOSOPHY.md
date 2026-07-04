@@ -21,3 +21,6 @@ The folder structure (`lib/formatters`) ensures that adding a new type (e.g., "B
 
 ### 5. Human-Centric Features
 Calculated "Natural Text" timestamps represent our belief that tools should adapt to how people speak, not just how computers count.
+
+### 6. Robustness Over Assumptions
+We avoid assuming inputs will strictly be ASCII. Unicode bounds checking and test-driven scaffolding define our commitment to stable user experiences, preventing unexpected DOM crashes in extreme edge cases.

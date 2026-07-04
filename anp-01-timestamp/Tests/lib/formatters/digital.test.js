@@ -32,7 +32,7 @@ describe('digital', () => {
         ];
 
         testCases.forEach(({ format, regex }) => {
-            app.settings["timestamp for digital - structure"] = format;
+            app.settings["timestamp digital - format"] = format;
             const result = digital(app);
             expect(result).toMatch(regex);
         });
@@ -40,30 +40,30 @@ describe('digital', () => {
 
     test('should match exact Moment.js examples from docs', () => {
         // dddd, MMMM Do YYYY, h:mm:ss a
-        app.settings["timestamp for digital - structure"] = "dddd, MMMM Do YYYY, h:mm:ss a";
+        app.settings["timestamp digital - format"] = "dddd, MMMM Do YYYY, h:mm:ss a";
         expect(digital(app)).toMatch(/^[A-Za-z]+, [A-Za-z]+ \d+(st|nd|rd|th) \d{4}, \d{1,2}:\d{2}:\d{2} (am|pm)$/i);
 
         // ddd, hA
-        app.settings["timestamp for digital - structure"] = "ddd, hA";
+        app.settings["timestamp digital - format"] = "ddd, hA";
         expect(digital(app)).toMatch(/^[A-Za-z]{3}, \d{1,2}(AM|PM)$/);
 
         // [Today is] dddd
-        app.settings["timestamp for digital - structure"] = "[Today is] dddd";
+        app.settings["timestamp digital - format"] = "[Today is] dddd";
         expect(digital(app)).toMatch(/^Today is [A-Za-z]+$/);
     });
 
     test('should support ISO shorthand', () => {
-        app.settings["timestamp for digital - structure"] = "ISO";
+        app.settings["timestamp digital - format"] = "ISO";
         expect(digital(app)).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/);
     });
 
     test('should handle multiple literal escaping blocks', () => {
-        app.settings["timestamp for digital - structure"] = "[The year is] YYYY [and it is] dddd";
+        app.settings["timestamp digital - format"] = "[The year is] YYYY [and it is] dddd";
         expect(digital(app)).toMatch(/^The year is \d{4} and it is [A-Za-z]+$/);
     });
 
     test('should handle nested-like brackets (non-recursive)', () => {
-        app.settings["timestamp for digital - structure"] = "[Date [is]] YYYY";
+        app.settings["timestamp digital - format"] = "[Date [is]] YYYY";
         expect(digital(app)).toBe("Date [is] " + new Date().getFullYear());
     });
 });

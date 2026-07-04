@@ -6,8 +6,9 @@
 export function roman(app) {
     const d = new Date();
     const r = n => {
+        if (n === 0) return "0";
         if (!+n) return '';
-        const k = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCCC", "CM", "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC", "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"], g = String(+n).split("");
+        const k = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM", "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC", "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"], g = String(+n).split("");
         let s = "", i = 3;
         while (i--) { let v = g.pop(); if (v) s = (k[+v + (i * 10)] || "") + s; }
         return "M".repeat(+g.join("") || 0) + s;

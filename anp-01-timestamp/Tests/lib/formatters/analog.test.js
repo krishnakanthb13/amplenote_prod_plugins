@@ -26,8 +26,8 @@ describe('analog', () => {
                 replaceSelection: jest.fn().mockResolvedValue(true)
             },
             settings: {
-                "timestamp analog - theme - dark / light / neon": "neon",
-                "timestamp analog - post script": "PostScriptText"
+                "timestamp analog - theme": "neon",
+                "timestamp analog - suffix": "SuffixText"
             },
             attachNoteMedia: jest.fn().mockResolvedValue("https://example.com/uploaded.png"),
             alert: jest.fn()
@@ -73,7 +73,7 @@ describe('analog', () => {
         expect(app.context.replaceSelection).toHaveBeenCalled();
         const callArg = app.context.replaceSelection.mock.calls[0][0];
         expect(callArg).toContain("https://example.com/uploaded.png");
-        expect(callArg).toContain("PostScriptText");
+        expect(callArg).toContain("SuffixText");
     });
 
     test('should return error when noteUUID is missing', async () => {

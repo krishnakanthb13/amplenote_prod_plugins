@@ -20,7 +20,7 @@ export function text(app) {
     else if (m < 30) s = `It's ${getM(m)} past ${H[h % 12]}`;
     else s = `It's ${getM(60 - m)} to ${H[(h + 1) % 12]}`;
 
-    const pre = app.settings["timestamp text - pre script"] || "";
-    const post = app.settings["timestamp text - post script"] || "";
+    const pre = app.settings["timestamp text - prefix"] || "";
+    const post = app.settings["timestamp text - suffix"] || "";
     return (pre ? pre + " " : "") + s + (post ? ". " + post : ".");
 }
