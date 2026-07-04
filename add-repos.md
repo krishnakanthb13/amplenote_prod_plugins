@@ -3,14 +3,18 @@
 This repository uses a semi-automated workflow to manage public GitHub repositories as submodules within this private repository.
 
 ## 🛠 Usage
-We provide a utility script `add-repos.bat` (Windows) to handle the entire lifecycle of adding or updating a repository link.
+We provide a utility script `add-repos.bat` (Windows) to handle the entire lifecycle of adding, linking, or updating repository submodules.
 
 ### How to use:
 1. Double-click `add-repos.bat` or run it from a terminal.
-2. Paste the **full URL** of the public GitHub repository you want to link.
+2. Select your action:
+   - **Option 1**: Link a new public repository (Add Submodule). You will be prompted to paste the **full URL** of the public GitHub repository you want to link.
+   - **Option 2**: Update existing submodules to their latest versions online.
 3. Confirm the action.
 
 ### What the script does:
+
+#### For Option 1 (Link a new public repository):
 1. **Sanitizes**: It checks for and removes any "zombie" Git data from previous failed attempts or existing links.
 2. **Pre-flight check**: It runs `git ls-remote` to verify the remote is reachable *before* making any changes. If the repo is unreachable (private, non-existent, or blocked by network/credentials) it stops early with a clear message instead of failing halfway.
 3. **Auto-seeds empty repos**: If the remote exists but is **empty** (no commits yet), it automatically creates and pushes an initial `README.md` commit on `main`. A submodule must point at a commit, so this prevents the classic *"branch yet to be born / unable to checkout submodule"* failure.
@@ -18,6 +22,11 @@ We provide a utility script `add-repos.bat` (Windows) to handle the entire lifec
 5. **Documents**: It automatically appends the link and date to the [Submodules](#submodules) section of `README.md`.
 6. **Commits**: It creates a git commit with a standard message.
 7. **Pushes**: It automatically pushes the changes to your current active branch (`main` or `master`).
+
+#### For Option 2 (Update existing submodules):
+1. **Updates**: It runs `git submodule update --remote --merge` to pull the latest online versions of all linked submodules.
+2. **Stages & Commits**: If there are updates, it stages them and creates a commit with the message `"Updated submodules to the latest version available online"`.
+3. **Pushes**: It automatically pushes the changes to your current active branch (`main` or `master`).
 
 > **Workflow tip:** You can create a completely empty repo on GitHub (no README, no `.gitignore`), paste its URL, and the script seeds it for you. No manual "Add a README" step required.
 
@@ -46,7 +55,63 @@ The remote was empty and the script tried to auto-seed an initial commit, but th
 - Check your internet connection.
 
 ### How to update the code in the submodules?
-To pull the latest changes for **all** submodules at once, run:
+You can run `add-repos.bat` and select **Option 2** to update all submodules automatically. Alternatively, to perform it manually via the command line:
 ```bash
 git submodule update --remote --merge
+```
+
+### "No .gitmodules file found" or "No submodules are currently configured"
+You must link at least one public repository using **Option 1** first before you can run the update script (Option 2).
+
+### Update fails with merge conflicts
+If the remote changes in a submodule conflict with your local modifications in that submodule, the update command might fail. To resolve this:
+1. Open a terminal and navigate (`cd`) into the folder of the conflicting submodule.
+2. Resolve the merge conflicts manually (using your editor or git commands).
+3. Stage the resolved files inside the submodule folder: `git add .`
+4. Commit the resolution inside the submodule (if needed).
+5. Go back to the root directory of this project and run `add-repos.bat` (Option 2) again to complete the update.
+
+## 🔢 Exit Codes
+The script returns the following exit codes:
+
+| Code | Meaning |
+|------|---------|
+| `0`  | Success (submodule successfully added or updated) |
+| `1`  | Error encountered (e.g. unreachable repository, missing prerequisites, or git command failure) |
+
+## 📊 Technical Analysis & Reference
+
+### What This Script Does Better Than Manual Git:
+| Manual Git | This Script |
+|------------|-------------|
+| "Submodule already exists" errors | Auto-cleans leftover zombie data |
+| Empty repo "branch unborn" failures | Auto-seeds with a README |
+| Staging unrelated files | Selective staging (`git add -u`) |
+| Push to wrong branch in detached HEAD | Detects and falls back gracefully |
+| No documentation updates | Auto-updates README history |
+| No pre-flight checks | Validates remote repo exists first |
+
+### Key Design Choices & Strengths:
+1. **Robust error handling** - Every Git operation has explicit error checking.
+2. **Self-healing** - Cleans up Git submodule cache automatically.
+3. **Detached HEAD support** - Falls back to `git branch --show-current`.
+4. **PowerShell fallbacks** - Gracefully handles date-formatting using `wmic` if PowerShell is missing.
+5. **Clean staging** - Uses selective staging (`git add -u`) to avoid committing unrelated local/untracked files.
+
+### Future CI/CD Integration Example:
+If you wish to schedule weekly automated updates in GitHub Actions:
+```yaml
+# .github/workflows/update-submodules.yml
+name: Update Submodules
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sundays
+jobs:
+  update:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./add-repos.bat
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```

@@ -4,14 +4,19 @@
 setlocal
 
 :: ============================================================================
-:: REPO MANAGEMENT SOURCE OF TRUTH (V8 - Ultra Stable + Empty-Repo Auto-Seed)
+:: REPO MANAGEMENT SOURCE OF TRUTH (V9 - Ultra Stable + Update Feature + Safety)
 :: ============================================================================
 :: This script is designed to link public repositories as submodules into 
 :: this private project while handling edge cases that usually crash Git.
 
 echo ========================================
-echo   GitHub Submodule Setup Utility (V8)
+echo   GitHub Submodule Setup Utility (V9)
 echo ========================================
+
+:: --- STARTUP CLEANUP ---
+if exist temp_heads.txt del temp_heads.txt >nul 2>&1
+if exist temp_branch.txt del temp_branch.txt >nul 2>&1
+if exist temp_count.txt del temp_count.txt >nul 2>&1
 
 :: --- PREREQUISITE CHECK ---
 :: Verify that Git is installed and available in the system PATH.
@@ -22,6 +27,25 @@ if %ERRORLEVEL% NEQ 0 (
     pause
     exit /b 1
 )
+
+:: Verify that PowerShell is installed and available in the system PATH.
+where powershell >nul 2>&1
+set "powershell_available=0"
+if %ERRORLEVEL% EQU 0 set "powershell_available=1"
+
+:: --- MODE SELECTION ---
+echo.
+echo Select an action:
+echo [1] Link a new public repository (Add Submodule)
+echo [2] Update existing submodules to their latest versions online
+echo.
+set /p mode="Enter choice (1 or 2, default is 1): "
+if "%mode%"=="" set "mode=1"
+
+if "%mode%"=="2" goto UPDATE_REPOS
+if "%mode%"=="1" goto INPUT_URL
+echo Invalid choice. Defaulting to Option 1.
+echo.
 
 :: --- INPUT COLLECTION ---
 :: Ask the user for the GitHub URL. If empty, loop back to the prompt.
@@ -204,6 +228,23 @@ if %ERRORLEVEL% EQU 0 goto SKIP_README_APPEND
 :: '&' and other special characters are handled safely, and we pass inputs via
 :: environment variables to avoid CMD quoting issues. If the marker is missing
 :: for any reason, PowerShell falls back to a plain append.
+if "%powershell_available%"=="0" (
+    echo [WARNING] PowerShell is not available. Appending link to the end of README.md as a fallback.
+    set "today="
+    for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value 2^>nul') do set "dt=%%I"
+    if defined dt (
+        :: Extract day, month, year from YYYYMMDD...
+        setlocal enabledelayedexpansion
+        set "temp_dt=!dt!"
+        set "formatted_date=!temp_dt:~6,2!-!temp_dt:~4,2!-!temp_dt:~0,4!"
+        echo - [!repo_name!](!repo_url!) added on !formatted_date! >> README.md
+        endlocal
+        goto POST_README
+    )
+    echo - [%repo_name%](%repo_url%) added on %DATE% >> README.md
+    goto POST_README
+)
+
 set "ENTRY_NAME=%repo_name%"
 set "ENTRY_URL=%repo_url%"
 powershell -NoProfile -Command "$p='README.md'; $name=$env:ENTRY_NAME; $url=$env:ENTRY_URL; $date=Get-Date -Format 'dd-MM-yyyy'; $entry='- ['+$name+']('+$url+') added on '+$date; $lines=@(Get-Content -LiteralPath $p); $m=$lines | Select-String -SimpleMatch '### Submodule History' | Select-Object -First 1; if($m){$i=$m.LineNumber; $out=@(); if($i-gt0){$out+=$lines[0..($i-1)]}; $out+=$entry; if($i-lt$lines.Count){$out+=$lines[$i..($lines.Count-1)]}; Set-Content -LiteralPath $p -Value $out}else{Add-Content -LiteralPath $p -Value $entry}"
@@ -231,6 +272,9 @@ echo Status: Detecting current branch...
 set "current_branch="
 :: Write the branch name to a temp file to avoid CMD shell parsing errors.
 git symbolic-ref --short HEAD > temp_branch.txt 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    git branch --show-current > temp_branch.txt 2>nul
+)
 set /p current_branch=<temp_branch.txt
 if exist temp_branch.txt del temp_branch.txt
 
@@ -255,6 +299,131 @@ echo.
 echo ========================================
 echo   SUCCESS: Public repo is now linked!
 echo   README.md has been updated.
+echo ========================================
+pause
+exit /b 0
+
+:: ============================================================================
+:: UPDATE EXISTING SUBMODULES SECTION
+:: ============================================================================
+:UPDATE_REPOS
+:: Safety checks before update
+if not exist .gitmodules (
+    echo [ERROR] No .gitmodules file found in this repository.
+    echo Please link a repository first using Option 1.
+    pause
+    exit /b 1
+)
+
+git submodule status > temp_count.txt 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    if exist temp_count.txt del temp_count.txt >nul 2>&1
+    echo [ERROR] Git failed to retrieve submodule status.
+    pause
+    exit /b 1
+)
+
+findstr /R "." temp_count.txt >nul
+if %ERRORLEVEL% NEQ 0 (
+    if exist temp_count.txt del temp_count.txt >nul 2>&1
+    echo [ERROR] No submodules are currently configured in this repository.
+    echo Please link a repository first using Option 1.
+    pause
+    exit /b 1
+)
+if exist temp_count.txt del temp_count.txt >nul 2>&1
+
+echo.
+echo ========================================
+echo   Updating Existing Submodules
+echo ========================================
+echo.
+echo [PENDING ACTION]
+echo 1. Pull latest commits for all submodules from their respective remote repositories.
+echo 2. Commit the updated submodule references.
+echo 3. Push the updates to the current branch.
+echo.
+
+set /p confirm="Proceed with update? (Y/N): "
+if /I "%confirm%" NEQ "Y" (
+    echo Update cancelled by user.
+    pause
+    exit /b
+)
+
+echo.
+echo Status: Fetching and updating submodules...
+:: Run submodule update pointing to remote
+git submodule update --remote --merge
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo [ERROR] Git failed to update submodules.
+    echo This may be due to merge conflicts in one or more submodules.
+    echo Please see add-repos.md for conflict resolution steps.
+    pause
+    exit /b 1
+)
+
+:: Check if there are any changes to commit (staged or unstaged).
+:: 'git diff --quiet' only checks unstaged working tree changes, which misses
+:: submodule pointer updates that git stages automatically after --remote --merge.
+:: 'git status --porcelain' reports all changes including staged ones.
+git status --porcelain | findstr "." >nul
+set "has_changes=%ERRORLEVEL%"
+:: If exit code is 0, findstr found output (changes exist). If 1, no changes.
+if "%has_changes%"=="1" (
+    echo.
+    echo Status: No updates found. All submodules are already up-to-date.
+    pause
+    exit /b 0
+)
+
+echo.
+echo Status: Staging changes...
+:: Stage only tracked modifications (this includes submodule reference updates)
+git add -u
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo [ERROR] Failed to stage changes.
+    pause
+    exit /b 1
+)
+
+git commit -m "Updated submodules to the latest version available online"
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo [ERROR] Failed to commit changes.
+    pause
+    exit /b 1
+)
+
+:: --- BRANCH DETECTION & PUSH ---
+echo.
+echo Status: Detecting current branch...
+set "current_branch="
+git symbolic-ref --short HEAD > temp_branch.txt 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    git branch --show-current > temp_branch.txt 2>nul
+)
+set /p current_branch=<temp_branch.txt
+if exist temp_branch.txt del temp_branch.txt >nul 2>&1
+
+if "%current_branch%"=="" set "current_branch=main"
+
+echo Status: Pushing to %current_branch%...
+git push origin %current_branch%
+
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo [WARNING] Push failed. 
+    echo Please push manually using: git push origin %current_branch%
+    pause
+    exit /b 1
+)
+
+echo.
+echo ========================================
+echo   SUCCESS: Submodules updated and pushed!
 echo ========================================
 pause
 exit /b 0
