@@ -83,14 +83,16 @@ export default async function (app) {
 
       // Handle exploding
       if (preset.explode) {
-        const newRolls = [...rolls];
-        for (let i = 0; i < newRolls.length; i++) {
-          while (newRolls[i] === preset.explodeTarget) {
-            const extraRoll = Math.floor(Math.random() * faces) + 1;
-            newRolls.push(extraRoll);
+        const finalRolls = [];
+        for (let i = 0; i < rolls.length; i++) {
+          let currentRoll = rolls[i];
+          finalRolls.push(currentRoll);
+          while (currentRoll === preset.explodeTarget) {
+            currentRoll = Math.floor(Math.random() * faces) + 1;
+            finalRolls.push(currentRoll);
           }
         }
-        rolls = newRolls;
+        rolls = finalRolls;
       }
 
       // Handle sort

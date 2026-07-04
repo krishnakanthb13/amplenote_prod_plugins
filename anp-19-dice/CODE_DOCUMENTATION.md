@@ -66,7 +66,7 @@ Exposes the plugin manifest containing `appOption` (Basic, Advanced, Specialized
 
 ### 9. Generators & Decision Matrix (`lib/weighted_random.js`, `lib/decision_matrix.js` & `lib/name_generator.js`)
 - `lib/weighted_random.js` selects an item from a user-supplied comma-separated list according to matching relative weights.
-- `lib/decision_matrix.js` implements a multi-criteria decision analysis framework, calculating normalized scores for choices based on weighted criteria.
+- `lib/decision_matrix.js` implements a multi-criteria decision analysis framework, randomly generating scores (1-10) for each option against criteria and multiplying them by custom weights to make a randomized, weighted decision.
 - `lib/name_generator.js` produces random medieval/fantasy, sci-fi, or Norse names combined with optionally randomized epic titles.
 
 ### 10. History & Utilities (`lib/history.js` & `lib/utils.js`)

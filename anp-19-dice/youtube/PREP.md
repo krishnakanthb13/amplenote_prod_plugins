@@ -7,43 +7,68 @@
 - **Option B (Benefit-driven):** Boost Your Productivity with Amplenote's Dice Plugin
 
 ### Thumbnail Plan
-- **Visual:** A clean screenshot of the plugin's Tarot Card spread or Decision Matrix in action within Amplenote.
-- **Text:** Bold, readable text like **"MASTER AMPLENOTE DICE"** or **"AMPLENOTE PRO TIP."**
+- **Background:** Use Amplenote's dark mode color (#1E1E1E) as the solid background color.
+- **Text Formatting:**
+  - **"AMPLENOTE PLUGIN:"** must be uppercase, using a vibrant Amplenote blue (#007AFF) or bold accent color, aligned to the center.
+  - The **DICE** plugin name should be placed immediately below it in stark white, extra-large, bold typography.
+- **Visual/Icon:** Place the official Amplenote logo/icon in the bottom right corner of the thumbnail.
 
 ### Description
-- **Summary:** A complete, no-fluff walkthrough of every feature in the Amplenote Dice plugin — from basic polyhedral rolls to advanced oracles, RPG systems, and decision tools.
-- **Detailed Options:**
-    The Dice plugin turns Amplenote into a powerful randomization hub. This video covers every option and sub-option across four categories:
-    
-    **General Dice**
-    - **Basic:** Polyhedral dice with custom counts, faces, min/max limits, keep/drop, exploding, and unique results.
-    - **Advanced:** Complex math expressions like `3d4 + 2d6 * 5`.
-    - **Quick Roll Presets:** One-click D20, 2d6, 3d6, and D&D Ability Scores.
-    - **Percentile (D100):** Two-digit rolls with optional Flip-to-Succeed.
-    
-    **Game Systems**
-    - **Fudge/Fate:** Fate dice with net modifier calculation.
-    - **Fantasy AGE Stunt (Single & Party):** 3d6 checks with automatic stunt-point detection.
-    - **Dice Pool (Shadowrun/WoD):** d6 pool against a success threshold, with exploding and hit/miss counting.
-    
-    **Oracles & Divination**
-    - **Specialized:** Sicherman, Intransitive, and Poker dice with probability outputs.
-    - **8 Ball:** Classic yes/no answers.
-    - **Ask Sai Baba:** 720 wisdom responses.
-    - **Tarot Cards:** Single Card, 3-Card Spread, and Celtic Cross with reversed meanings.
-    
-    **Generators & Tools**
-    - **Weighted Random:** Probability-weighted item selection.
-    - **Decision Matrix:** Score options against weighted criteria.
-    - **Name Generator:** Themed names (Fantasy, Sci-Fi, Norse) with titles.
-    - **Table - Randomizer:** Pick random cells from note-based Markdown tables.
-- **Timestamps:** 
-    - 0:00 Intro & Setup
-    - 0:45 General Dice (Basic, Advanced, Presets, Percentile)
-    - 2:15 Game Systems (Fudge, AGE, Dice Pool)
-    - 3:45 Oracles & Divination (Specialized, 8-Ball, Sai Baba, Tarot)
-    - 5:30 Generators & Tools (Weighted, Decision Matrix, Name Gen, Table)
-    - 7:00 Summary & Outro
+
+🎲 COMPLETE GUIDE TO THE DICE ROLLER & RANDOMIZER PLUGIN FOR AMPLENOTE
+
+A straightforward, fact-based walkthrough of the Dice plugin for Amplenote. In this video, we cover every single feature this powerful utility provides—from basic polyhedral dice rolls to advanced TTRPG game systems, decision matrices, oracles, and table randomizers.
+
+Whether you are managing a tabletop RPG campaign inside your notes, making objective business decisions, or looking for writing inspiration, this plugin turns Amplenote into the ultimate randomization engine.
+
+🔗 ESSENTIAL LINKS & RESOURCES
+
+* GitHub Repo: https://github.com/krishnakanthb13/anp-19-dice
+
+* Try Amplenote (Sign Up): https://www.amplenote.com/signup?ref=7JGSMI4H0
+* Explore My Amplenote Plugins: https://krishnakanthb13.github.io/A/
+* Alternative Plugins Page: https://public.amplenote.com/Y3dy91/krishna-plugins
+* Browse Official Amplenote Plugins: https://www.amplenote.com/plugins
+* Support My Work & Development: https://krishnakanthb13.github.io/S/
+
+🕒 VIDEO TIMESTAMPS
+
+0:00 - Introduction & Overview
+0:23 - General Dice (Basic, Advanced Formulae, Presets, Percentiles)
+2:00 - Game Systems (Fudge/Fate, Fantasy AGE Stunts, Shadowrun Dice Pools)
+3:42 - Oracles & Divination (8-Ball, Sai Baba Wisdom, Tarot Spreads)
+4:15 - Generators & Tools (Weighted Random, Decision Matrix, Name Generator)
+4:55 - Note-Level Action (Markdown Table Randomizer)
+
+📋 FEATURE BREAKDOWN
+
+GENERAL DICE
+
+* Basic: Roll standard polyhedral dice with customizable counts, ranges, keep/drop toggles, and exploding mechanics.
+* Advanced: Evaluate complex mathematical expressions directly (e.g., 3d4 + 2d6 * 5).
+* Quick Roll Presets: One-click checks for D20, 2d6, 3d6, and D&D Ability Scores.
+* Percentile (D100): Classic D100 rolling with "Flip-to-Succeed" support.
+
+GAME SYSTEMS
+
+* Fudge/Fate: Net modifier tracking using standard Fate dice rules.
+* Fantasy AGE Stunt (Single & Bulk): Automatic double-detection to instantly calculate stunt points for single characters or entire parties.
+* Dice Pool: Built for Shadowrun/WoD mechanics, tracking success thresholds and exploding mechanics.
+
+ORACLES & DIVINATION
+
+* Specialized Dice: Simulates Sicherman, Intransitive, and standard/numeric Poker variations with probability data.
+* 8 Ball & Ask Sai Baba: Quick Yes/No answers or deeper reflection using 720 wisdom responses.
+* Tarot Cards: Full Single Card, 3-Card Spread, or Celtic Cross draws with card meanings and reversals.
+
+GENERATORS & TOOLS
+
+* Weighted Random: Pick items out of a list using your own relative weight coefficients.
+* Decision Matrix: Grade choices objectively against customized, weighted criteria.
+* Name Generator: Generate fantasy, Norse, or sci-fi names complete with thematic titles.
+* Table Randomizer: Pull random cells, rows, or columns directly from native Amplenote Markdown tables.
+
+#Amplenote #PKM #ProductivityTools #TTRPG #Tarot #DecisionMatrix #NoteTaking
 
 ---
 

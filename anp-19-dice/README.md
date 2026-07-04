@@ -68,7 +68,7 @@ Once activated, the plugin registers several app-level commands and one note-lev
 
 ### 🛠️ Generators & Tools
 - **`Weighted Random`**: Select from a custom list of items where some items are more likely to be picked than others.
-- **`Decision Matrix`**: Rank options against weighted criteria to find the optimal choice.
+- **`Decision Matrix`**: Rank options against weighted criteria using randomly generated scores (1-10) to make an unbiased, weighted choice.
 - **`Name Generator`**: Generate random names in Fantasy, Sci-Fi, or Norse styles, optionally with titles.
 - **`Table - Randomizer`** *(Note Action)*: Run this from inside a note to pick random row/column combinations directly from tables.
 
