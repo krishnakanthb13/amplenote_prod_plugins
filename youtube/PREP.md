@@ -18,41 +18,41 @@ This document prepares the video assets and script for explaining the modular co
 - **Visual/Icon:** Place the official Amplenote logo/icon in the bottom right corner of the thumbnail.
 
 ### Description
-- **Summary**: A comprehensive, step-by-step breakdown of the directory layout and build system used to develop modular Amplenote plugins.
-- **Structure**:
-    1. **Emoji Title**: 📂 COMPLETE GUIDE TO THE AMPLENOTE PLUGIN CODE STRUCTURE
-       Learn how to organize your Amplenote plugin projects using modern, modular ECMAScript Modules (ESM), and compile them seamlessly into a single object expression compatible with Amplenote's plugin environment.
 
-    2. **Essential Links**:
-        🔗 ESSENTIAL LINKS & RESOURCES
-        * Try Amplenote (Sign Up): https://www.amplenote.com/signup?ref=7JGSMI4H0
-        * Explore My Amplenote Plugins: https://krishnakanthb13.github.io/A/
-        * Alternative Plugins Page: https://public.amplenote.com/Y3dy91/krishna-plugins
-        * Browse Official Amplenote Plugins: https://www.amplenote.com/plugins
-        * Support My Work & Development: https://krishnakanthb13.github.io/S/
+A comprehensive, step-by-step breakdown of the directory layout and build system used to develop modular Amplenote plugins.
 
-    3. **Timestamps**:
-        ⏳ VIDEO TIMESTAMPS
-        0:00 - Introduction to Modular Plugin Setup
-        0:45 - High-Level Directory Overview
-        1:30 - Detailed Plugin Directory Structure
-        2:15 - Inside the Entry Point File
-        3:00 - Understanding the lib/ Folder & Modules
-        3:45 - The Build System & IIFE Bundler Logic
-        4:30 - How to Write and Run Jest Tests
-        5:15 - Local Commands and Development Workflow
+📂 COMPLETE GUIDE TO THE AMPLENOTE PLUGIN CODE STRUCTURE
 
-    4. **Feature Breakdown**:
-        🛠️ STRUCTURE BREAKDOWN
-        [ENTRY POINT FILE]
-        * Main Javascript file mapping user-facing actions to modular functions.
-        [LIB DIRECTORY]
-        * Internal logic files, categorizing functions (e.g. formatters, parsers).
-        [BUILD OUTPUT]
-        * Compiled single-file distribution code ready to be pasted into Amplenote.
+Learn how to organize your Amplenote plugin projects using modern, modular ECMAScript Modules (ESM), and compile them seamlessly into a single object expression compatible with Amplenote's plugin environment.
 
-    5. **Hashtags**:
-        #Amplenote #Productivity #TypeScript #WebDevelopment #DeveloperGuide
+🔗 ESSENTIAL LINKS & RESOURCES
+* **Amplenote GitHub Repo**: https://github.com/krishnakanthb13/amplenote_prod_plugins
+
+* **Try Amplenote (Sign Up)**: https://www.amplenote.com/signup?ref=7JGSMI4H0
+* **Explore My Amplenote Plugins**: https://krishnakanthb13.github.io/A/
+* **Alternative Plugins Page**: https://public.amplenote.com/Y3dy91/krishna-plugins
+* **Browse Official Amplenote Plugins**: https://www.amplenote.com/plugins
+* Support My Work & Development: https://krishnakanthb13.github.io/S/
+
+⏳ VIDEO TIMESTAMPS
+0:00 - Introduction to Modular Plugin Setup
+0:40 - High-Level Directory Overview
+1:39 - Detailed Plugin Directory Structure
+2:17 - Inside the Entry Point File
+2:50 - Understanding the lib/ Folder & Modules
+3:13 - The Build System & IIFE Bundler Logic
+3:50 - How to Write and Run Jest Tests
+4:11 - Local Commands and Development Workflow
+
+🛠️ STRUCTURE BREAKDOWN
+[ENTRY POINT FILE]
+* Main Javascript file mapping user-facing actions to modular functions.
+[LIB DIRECTORY]
+* Internal logic files, categorizing functions (e.g. formatters, parsers).
+[BUILD OUTPUT]
+* Compiled single-file distribution code ready to be pasted into Amplenote.
+
+#Amplenote #Productivity #TypeScript #WebDevelopment #DeveloperGuide
 
 ---
 
