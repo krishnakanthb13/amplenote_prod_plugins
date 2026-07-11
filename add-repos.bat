@@ -1,25 +1,52 @@
 @echo off
-:: Disable delayed expansion to prevent special characters (like '&' in URLs) from crashing the script.
-:: We use a local environment to keep variables contained to this session.
 setlocal
 
 :: ============================================================================
-:: REPO MANAGEMENT SOURCE OF TRUTH (V9 - Ultra Stable + Update Feature + Safety)
+:: REPO MANAGEMENT SOURCE OF TRUTH (V11 - PS Check Fix + Fallback Hardening)
 :: ============================================================================
-:: This script is designed to link public repositories as submodules into 
-:: this private project while handling edge cases that usually crash Git.
+:: Changes from V9:
+::  - All temp files moved to %TEMP% (prevents OneDrive sync lock)
+::  - README update delegated to a .ps1 helper (prevents CMD 8191-char limit crash)
+::  - Git credential prompts suppressed (GIT_TERMINAL_PROMPT=0)
+::  - Empty-repo detection fixed (checks for HEAD ref, not just any line)
+::  - Cleanup now also removes stale .gitmodules + .git/config entries
+::  - Branch read uses for /f instead of set /p (handles special chars)
+::  - Folder deletion verified before git submodule add
+::  - Git-inside-work-tree check added at startup
+::  - URL validated to HTTPS GitHub format
+::  - Mode selection fallthrough fixed
+::  - Detached HEAD detected before push (safe error instead of silent failure)
+::  - Parallel update with -j 4
+::  - V11: PS availability check simplified (inline if() was unreliable)
+::  - V11: URL validation findstr quote-parse bug fixed (^" caused >nul to be treated as filename)
+::  - V11: --recursive scoped to new submodule (initializes nested submodules safely)
+::  - V11: README fallback section guard added
 
 echo ========================================
-echo   GitHub Submodule Setup Utility (V9)
+echo   GitHub Submodule Setup Utility (V11)
 echo ========================================
+
+:: --- DEFINE TEMP FILE PATHS (in %TEMP% so OneDrive never touches them) ---
+set "TMP_HEADS=%TEMP%\anp_submod_heads.txt"
+set "TMP_BRANCH=%TEMP%\anp_submod_branch.txt"
+set "TMP_COUNT=%TEMP%\anp_submod_count.txt"
+set "TMP_PS=%TEMP%\anp_submod_readme.ps1"
 
 :: --- STARTUP CLEANUP ---
-if exist temp_heads.txt del temp_heads.txt >nul 2>&1
-if exist temp_branch.txt del temp_branch.txt >nul 2>&1
-if exist temp_count.txt del temp_count.txt >nul 2>&1
+if exist "%TMP_HEADS%"  del "%TMP_HEADS%"  >nul 2>&1
+if exist "%TMP_BRANCH%" del "%TMP_BRANCH%" >nul 2>&1
+if exist "%TMP_COUNT%"  del "%TMP_COUNT%"  >nul 2>&1
+if exist "%TMP_PS%"     del "%TMP_PS%"     >nul 2>&1
 
-:: --- PREREQUISITE CHECK ---
-:: Verify that Git is installed and available in the system PATH.
+:: --- PREREQUISITE: Must be inside a Git repository ---
+git rev-parse --is-inside-work-tree >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] This script must be run from inside a Git repository.
+    pause
+    exit /b 1
+)
+
+:: --- PREREQUISITE: Git must be installed ---
 git --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Git is not installed or not in your PATH.
@@ -28,10 +55,13 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-:: Verify that PowerShell is installed and available in the system PATH.
-where powershell >nul 2>&1
+:: --- PREREQUISITE: Check for PowerShell (simple invocation test, most reliable) ---
 set "powershell_available=0"
+powershell -NoProfile -Command "exit 0" >nul 2>&1
 if %ERRORLEVEL% EQU 0 set "powershell_available=1"
+
+:: --- Suppress Git credential prompts so the script never hangs waiting for input ---
+set "GIT_TERMINAL_PROMPT=0"
 
 :: --- MODE SELECTION ---
 echo.
@@ -45,10 +75,12 @@ if "%mode%"=="" set "mode=1"
 if "%mode%"=="2" goto UPDATE_REPOS
 if "%mode%"=="1" goto INPUT_URL
 echo Invalid choice. Defaulting to Option 1.
-echo.
+goto INPUT_URL
 
-:: --- INPUT COLLECTION ---
-:: Ask the user for the GitHub URL. If empty, loop back to the prompt.
+:: ============================================================================
+:: OPTION 1 - ADD A NEW SUBMODULE
+:: ============================================================================
+
 :INPUT_URL
 set "repo_url="
 set /p repo_url="Enter the Public GitHub Repo URL: "
@@ -57,23 +89,28 @@ if "%repo_url%"=="" (
     goto INPUT_URL
 )
 
+:: --- VALIDATE: Must be a HTTPS GitHub URL ---
+echo %repo_url% | findstr /R "^https://github\.com/" >nul
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Invalid URL. Only HTTPS GitHub URLs are supported.
+    echo Example: https://github.com/user/repo-name
+    goto INPUT_URL
+)
+
 :: --- REPO NAME EXTRACTION ---
-:: Extract just the name of the repo (the last part of the URL) for folder naming.
 for %%F in ("%repo_url%") do set "repo_name=%%~nF"
 
-:: If extraction fails (invalid URL format), loop back to the prompt.
 if "%repo_name%"=="" (
     echo [ERROR] Could not extract repository name from URL.
     goto INPUT_URL
 )
 
-:: --- SUMMARY & CONFIRMATION ---
-:: Show the user what is about to happen before proceeding.
+:: --- SUMMARY ^& CONFIRMATION ---
 echo.
 echo [PENDING ACTION]
 echo 1. Clean environment (removes any old/broken links to this repo)
 echo 2. Link to: %repo_url%
-echo 3. Initialize ^& Update Submodules
+echo 3. Initialize ^& Update Submodule
 echo 4. Commit and Push to current branch
 echo.
 
@@ -85,48 +122,53 @@ if /I "%confirm%" NEQ "Y" (
 )
 
 :: --- CLEANING SECTION ---
-:: This section prevents common Git errors like "Submodule already exists in index".
 echo.
 echo Status: Cleaning environment for "%repo_name%"...
 
-:: 1. Force remove the repo name from Git's internal index memory.
-git rm -r --cached "%repo_name%" >nul 2>&1
-
-:: 2. Remove internal Git history cached in .git/modules.
-:: If we don't do this, Git prevents re-adding a submodule that used the same name.
-:: We use 'GOTO' instead of 'IF ( )' to avoid syntax crashes with complex URLs.
-if not exist ".git\modules\%repo_name%" goto SKIP_MODULE_CLEAN
-echo Status: Removing old cached git data...
-rmdir /s /q ".git\modules\%repo_name%" >nul 2>&1
-:SKIP_MODULE_CLEAN
-
-:: 3. Remove the physical folder from the disk if it exists.
-:: This ensures 'git submodule add' has a completely clean folder to clone into.
-if not exist "%repo_name%\" goto SKIP_DIR_CLEAN
-echo Removing folder "%repo_name%"...
-rmdir /s /q "%repo_name%"
-
-:: If rmdir fails (folder open elsewhere), stop here with a clear error.
-if exist "%repo_name%\" (
-    echo.
-    echo [ERROR] Could not delete folder "%repo_name%".
-    echo It might be open in another program / terminal.
-    echo Please close it and try again.
-    pause
-    exit /b 1
+:: 1. Remove from Git index only if present (suppress "pathspec not found" error)
+git ls-files --error-unmatch "%repo_name%" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    git rm -r --cached "%repo_name%" >nul 2>&1
 )
-:SKIP_DIR_CLEAN
 
-:: --- EMPTY REPO DETECTION & AUTO-SEED ---
-:: A submodule is a pointer to a COMMIT. A brand-new empty repo has no commits
-:: ("branch yet to be born"), so 'git submodule add' fails to checkout.
-:: We detect emptiness with 'git ls-remote' (exit 0 + no output = empty,
-:: non-zero exit = unreachable/private) and seed one initial commit if needed.
+:: 2. Remove stale entry from .gitmodules
+if exist ".gitmodules" (
+    git config --file .gitmodules --remove-section "submodule.%repo_name%" >nul 2>&1
+)
+
+:: 3. Remove stale entry from .git/config
+git config --remove-section "submodule.%repo_name%" >nul 2>&1
+
+:: 4. Remove internal Git history cached in .git/modules
+if exist ".git\modules\%repo_name%" (
+    echo Status: Removing old cached git data...
+    attrib -R /S /D ".git\modules\%repo_name%\*" >nul 2>&1
+    rmdir /s /q ".git\modules\%repo_name%" >nul 2>&1
+)
+
+:: 5. Remove the physical folder from disk
+if exist "%repo_name%\" (
+    echo Status: Removing existing folder "%repo_name%"...
+    attrib -R /S /D "%repo_name%\*" >nul 2>&1
+    rmdir /s /q "%repo_name%"
+
+    :: Verify deletion actually succeeded before git submodule add runs
+    if exist "%repo_name%\" (
+        echo.
+        echo [ERROR] Could not delete folder "%repo_name%".
+        echo It might be open in another program / terminal.
+        echo Please close it and try again.
+        pause
+        exit /b 1
+    )
+)
+
+:: --- EMPTY REPO DETECTION ^& AUTO-SEED ---
 echo.
 echo Status: Checking remote repository state...
-git ls-remote "%repo_url%" > temp_heads.txt 2>nul
+git ls-remote "%repo_url%" > "%TMP_HEADS%" 2>nul
 if %ERRORLEVEL% NEQ 0 (
-    if exist temp_heads.txt del temp_heads.txt
+    if exist "%TMP_HEADS%" del "%TMP_HEADS%"
     echo.
     echo [ERROR] Cannot reach repository "%repo_url%".
     echo It may be private, non-existent, or your network/credentials are blocking access.
@@ -134,16 +176,18 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-:: If ls-remote returned any line, the repo has refs (commits) -> not empty.
-findstr /r "." temp_heads.txt >nul
-set "repo_empty=1"
-if %ERRORLEVEL% EQU 0 set "repo_empty=0"
-if exist temp_heads.txt del temp_heads.txt
+:: Check for a HEAD ref - empty repo has no HEAD, non-empty always does.
+findstr /C:"HEAD" "%TMP_HEADS%" >nul
+if %ERRORLEVEL% EQU 0 (
+    set "repo_empty=0"
+) else (
+    set "repo_empty=1"
+)
+if exist "%TMP_HEADS%" del "%TMP_HEADS%"
 
 if "%repo_empty%"=="0" goto SKIP_SEED
 
 echo Status: Remote is EMPTY. Auto-seeding an initial commit...
-:: Clone into a throwaway folder (distinct from the submodule folder name).
 git clone "%repo_url%" "%repo_name%__seed"
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Failed to clone "%repo_url%" for seeding.
@@ -152,7 +196,6 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 pushd "%repo_name%__seed"
-:: Force the unborn HEAD to 'main' so the seeded branch is deterministic.
 git symbolic-ref HEAD refs/heads/main
 echo # %repo_name% > README.md
 echo. >> README.md
@@ -174,26 +217,36 @@ echo Status: Seed commit pushed to 'main'. Remote is now ready to link.
 :SKIP_SEED
 
 :: --- ACTION SECTION ---
-:: Physically link the remote repository as a submodule.
-:: '-f' forces the add even though '.gitignore' ignores the 'anp-*/' pattern;
-:: without it Git refuses with "paths are ignored by one of your .gitignore files".
 echo.
 echo Status: Adding submodule...
 git submodule add -f "%repo_url%" "%repo_name%"
-if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo [ERROR] Git failed to add the submodule.
-    echo The remote was reachable, so this is likely a local Git state issue,
-    echo such as a leftover folder or index entry. Try running this script again.
-    pause
-    exit /b 1
+set "add_err=%ERRORLEVEL%"
+
+if "%add_err%" NEQ "0" (
+    findstr /C:"%repo_name%" .gitmodules >nul 2>&1
+    if %ERRORLEVEL% EQU 0 (
+        echo Status: Submodule already in .gitmodules but not in index. Force-registering...
+        git submodule add -f "%repo_url%" "%repo_name%" >nul 2>&1
+        if %ERRORLEVEL% NEQ 0 (
+            echo.
+            echo [ERROR] Git failed to register the existing submodule folder.
+            echo Please close any programs using "%repo_name%" and try again.
+            pause
+            exit /b 1
+        )
+    ) else (
+        echo.
+        echo [ERROR] Git failed to add the submodule.
+        echo The remote was reachable, so this is likely a local Git state issue.
+        echo Try running this script again.
+        pause
+        exit /b 1
+    )
 )
 
-:: Download the actual files for the newly added submodule.
-:: Scope the update to ONLY this submodule path. A bare 'git submodule update'
-:: touches every submodule and aborts if any OTHER one has local uncommitted
-:: changes (e.g. work-in-progress in a different plugin), which has nothing to
-:: do with the repo we are linking right now.
+:: Download files - scoped to ONLY this submodule. --recursive is included
+:: so nested submodules (if any) also initialize, but the -- path scope
+:: prevents unrelated broken submodules from blocking this operation.
 echo.
 echo Status: Initializing and updating...
 git submodule update --init --recursive -- "%repo_name%"
@@ -205,90 +258,116 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 :: --- DOCUMENTATION AUTO-GEN ---
-:: Ensure a README.md exists and has the "Submodule History" marker we insert under.
 echo.
 echo Status: Updating documentation...
-if exist README.md goto README_EXISTS
-echo # Project Overview > README.md
-echo This is a private repository containing public submodules. >> README.md
-echo. >> README.md
-echo ## Submodules >> README.md
-echo. >> README.md
-echo ### Submodule History >> README.md
-:README_EXISTS
+if not exist README.md (
+    echo # Project Overview > README.md
+    echo This is a private repository containing public submodules. >> README.md
+    echo. >> README.md
+    echo ## Submodules >> README.md
+    echo. >> README.md
+    echo ### Submodule History >> README.md
+)
 
-:: Check if this specific repo is already mentioned in README.md.
-:: If not, insert a dated link to it UNDER the "### Submodule History" heading.
-findstr /C:"[%repo_name%]" README.md >nul
+:: Check for duplicate using exact URL match (avoids substring collision e.g. repo vs repo2)
+findstr /C:"%repo_url%" README.md >nul
 if %ERRORLEVEL% EQU 0 goto SKIP_README_APPEND
 
-:: Insert the entry right below the "### Submodule History" marker rather than
-:: blindly appending to end-of-file (the old bug dropped it below the License,
-:: outside the Submodules section). We delegate to PowerShell so URLs containing
-:: '&' and other special characters are handled safely, and we pass inputs via
-:: environment variables to avoid CMD quoting issues. If the marker is missing
-:: for any reason, PowerShell falls back to a plain append.
-if "%powershell_available%"=="0" (
-    echo [WARNING] PowerShell is not available. Appending link to the end of README.md as a fallback.
-    set "today="
-    for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value 2^>nul') do set "dt=%%I"
-    if defined dt (
-        :: Extract day, month, year from YYYYMMDD...
-        setlocal enabledelayedexpansion
-        set "temp_dt=!dt!"
-        set "formatted_date=!temp_dt:~6,2!-!temp_dt:~4,2!-!temp_dt:~0,4!"
-        echo - [!repo_name!](!repo_url!) added on !formatted_date! >> README.md
-        endlocal
-        goto POST_README
+:: Write the README update logic to a .ps1 helper file.
+:: This avoids: (1) CMD 8191-char line limit, (2) OneDrive file-lock on inline PS,
+:: (3) special-char quoting nightmares in the CMD shell.
+if "%powershell_available%"=="1" (
+    (
+        echo $p = 'README.md'
+        echo $name = [System.Environment]::GetEnvironmentVariable^('ENTRY_NAME'^)
+        echo $url  = [System.Environment]::GetEnvironmentVariable^('ENTRY_URL'^)
+        echo $date = Get-Date -Format 'dd-MM-yyyy'
+        echo $entry = '- [' + $name + ']^(' + $url + '^) added on ' + $date
+        echo $lines = @^(Get-Content -LiteralPath $p -Encoding UTF8^)
+        echo $m = $lines ^| Select-String -SimpleMatch '### Submodule History' ^| Select-Object -First 1
+        echo if ^($m^) {
+        echo     $i = $m.LineNumber
+        echo     $out = @^(^)
+        echo     if ^($i -gt 0^) { $out += $lines[0..^($i-1^)] }
+        echo     $out += $entry
+        echo     if ^($i -lt $lines.Count^) { $out += $lines[$i..^($lines.Count-1^)] }
+        echo     Set-Content -LiteralPath $p -Value $out -Encoding UTF8
+        echo } else {
+        echo     Add-Content -LiteralPath $p -Value $entry -Encoding UTF8
+        echo }
+    ) > "%TMP_PS%"
+    set "ENTRY_NAME=%repo_name%"
+    set "ENTRY_URL=%repo_url%"
+    powershell -NoProfile -ExecutionPolicy Bypass -File "%TMP_PS%"
+    if %ERRORLEVEL% NEQ 0 (
+        echo [WARNING] PowerShell README update failed. Falling back to plain append.
+        findstr /C:"### Submodule History" README.md >nul 2>&1
+        if %ERRORLEVEL% NEQ 0 (
+            echo. >> README.md
+            echo ### Submodule History >> README.md
+        )
+        echo - [%repo_name%](%repo_url%) >> README.md
+    ) else (
+        echo Status: Updated README.md
     )
-    echo - [%repo_name%](%repo_url%) added on %DATE% >> README.md
-    goto POST_README
+    if exist "%TMP_PS%" del "%TMP_PS%"
+) else (
+    echo [WARNING] PowerShell not available. Appending link to README.md.
+    findstr /C:"### Submodule History" README.md >nul 2>&1
+    if %ERRORLEVEL% NEQ 0 (
+        echo. >> README.md
+        echo ### Submodule History >> README.md
+    )
+    echo - [%repo_name%](%repo_url%) >> README.md
 )
 
-set "ENTRY_NAME=%repo_name%"
-set "ENTRY_URL=%repo_url%"
-powershell -NoProfile -Command "$p='README.md'; $name=$env:ENTRY_NAME; $url=$env:ENTRY_URL; $date=Get-Date -Format 'dd-MM-yyyy'; $entry='- ['+$name+']('+$url+') added on '+$date; $lines=@(Get-Content -LiteralPath $p); $m=$lines | Select-String -SimpleMatch '### Submodule History' | Select-Object -First 1; if($m){$i=$m.LineNumber; $out=@(); if($i-gt0){$out+=$lines[0..($i-1)]}; $out+=$entry; if($i-lt$lines.Count){$out+=$lines[$i..($lines.Count-1)]}; Set-Content -LiteralPath $p -Value $out}else{Add-Content -LiteralPath $p -Value $entry}"
+:: Verify the entry was actually written
+findstr /C:"%repo_url%" README.md >nul
 if %ERRORLEVEL% NEQ 0 (
-    echo [WARNING] Could not update the README history section automatically.
-) else (
-    echo Status: Updated README.md
+    echo [WARNING] Could not verify README.md was updated. Please check it manually.
 )
+
 goto POST_README
 :SKIP_README_APPEND
 echo Status: README.md already contains this repo. Skipping append.
 :POST_README
 
 :: --- GIT COMMIT ---
-:: Save the changes (submodule link + README change) to your local history.
 echo Status: Staging files...
 if exist .gitmodules git add .gitmodules
 git add "%repo_name%" README.md
 git commit -m "Added public submodule: %repo_name% and updated README"
+if %ERRORLEVEL% EQU 1 (
+    echo.
+    echo [WARNING] Nothing new to commit. Submodule may already be staged.
+    echo Attempting push in case there are unpushed local commits...
+)
 
-:: --- BRANCH DETECTION & PUSH ---
-:: We safely detect if you are on 'main', 'master', or a custom branch.
+:: --- BRANCH DETECTION ^& PUSH ---
 echo.
 echo Status: Detecting current branch...
 set "current_branch="
-:: Write the branch name to a temp file to avoid CMD shell parsing errors.
-git symbolic-ref --short HEAD > temp_branch.txt 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    git branch --show-current > temp_branch.txt 2>nul
-)
-set /p current_branch=<temp_branch.txt
-if exist temp_branch.txt del temp_branch.txt
+git rev-parse --abbrev-ref HEAD > "%TMP_BRANCH%" 2>nul
+for /f "usebackq delims=" %%i in ("%TMP_BRANCH%") do set "current_branch=%%i"
+if exist "%TMP_BRANCH%" del "%TMP_BRANCH%"
 
-:: Default to 'main' if detection fails for some reason.
 if "%current_branch%"=="" set "current_branch=main"
 
-:: Push the local commit to the remote GitHub repository.
+:: Detached HEAD: rev-parse returns the string "HEAD" in detached state
+if "%current_branch%"=="HEAD" (
+    echo.
+    echo [WARNING] Repository is in detached HEAD state. Cannot push automatically.
+    echo Please checkout a branch and push manually: git push origin ^<branch-name^>
+    pause
+    exit /b 1
+)
+
 echo Status: Pushing to %current_branch%...
 git push origin %current_branch%
 
-:: Final success or warning check.
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [WARNING] Push failed. 
+    echo [WARNING] Push failed.
     echo You may need to pull changes or check permissions.
     echo Please push manually using: git push origin %current_branch%
     pause
@@ -307,7 +386,6 @@ exit /b 0
 :: UPDATE EXISTING SUBMODULES SECTION
 :: ============================================================================
 :UPDATE_REPOS
-:: Safety checks before update
 if not exist .gitmodules (
     echo [ERROR] No .gitmodules file found in this repository.
     echo Please link a repository first using Option 1.
@@ -315,23 +393,23 @@ if not exist .gitmodules (
     exit /b 1
 )
 
-git submodule status > temp_count.txt 2>nul
+git submodule status > "%TMP_COUNT%" 2>nul
 if %ERRORLEVEL% NEQ 0 (
-    if exist temp_count.txt del temp_count.txt >nul 2>&1
+    if exist "%TMP_COUNT%" del "%TMP_COUNT%"
     echo [ERROR] Git failed to retrieve submodule status.
     pause
     exit /b 1
 )
 
-findstr /R "." temp_count.txt >nul
+findstr /R "." "%TMP_COUNT%" >nul
 if %ERRORLEVEL% NEQ 0 (
-    if exist temp_count.txt del temp_count.txt >nul 2>&1
+    if exist "%TMP_COUNT%" del "%TMP_COUNT%"
     echo [ERROR] No submodules are currently configured in this repository.
     echo Please link a repository first using Option 1.
     pause
     exit /b 1
 )
-if exist temp_count.txt del temp_count.txt >nul 2>&1
+if exist "%TMP_COUNT%" del "%TMP_COUNT%"
 
 echo.
 echo ========================================
@@ -339,7 +417,7 @@ echo   Updating Existing Submodules
 echo ========================================
 echo.
 echo [PENDING ACTION]
-echo 1. Pull latest commits for all submodules from their respective remote repositories.
+echo 1. Pull latest commits for all submodules from their remote repositories.
 echo 2. Commit the updated submodule references.
 echo 3. Push the updates to the current branch.
 echo.
@@ -352,25 +430,18 @@ if /I "%confirm%" NEQ "Y" (
 )
 
 echo.
-echo Status: Fetching and updating submodules...
-:: Run submodule update pointing to remote
-git submodule update --remote --merge
+echo Status: Fetching and updating submodules (parallel, j=4)...
+git submodule update --remote --merge -j 4
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo [ERROR] Git failed to update submodules.
     echo This may be due to merge conflicts in one or more submodules.
-    echo Please see add-repos.md for conflict resolution steps.
     pause
     exit /b 1
 )
 
-:: Check if there are any changes to commit (staged or unstaged).
-:: 'git diff --quiet' only checks unstaged working tree changes, which misses
-:: submodule pointer updates that git stages automatically after --remote --merge.
-:: 'git status --porcelain' reports all changes including staged ones.
 git status --porcelain | findstr "." >nul
 set "has_changes=%ERRORLEVEL%"
-:: If exit code is 0, findstr found output (changes exist). If 1, no changes.
 if "%has_changes%"=="1" (
     echo.
     echo Status: No updates found. All submodules are already up-to-date.
@@ -380,7 +451,6 @@ if "%has_changes%"=="1" (
 
 echo.
 echo Status: Staging changes...
-:: Stage only tracked modifications (this includes submodule reference updates)
 git add -u
 if %ERRORLEVEL% NEQ 0 (
     echo.
@@ -397,25 +467,29 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-:: --- BRANCH DETECTION & PUSH ---
+:: --- BRANCH DETECTION ^& PUSH ---
 echo.
 echo Status: Detecting current branch...
 set "current_branch="
-git symbolic-ref --short HEAD > temp_branch.txt 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    git branch --show-current > temp_branch.txt 2>nul
-)
-set /p current_branch=<temp_branch.txt
-if exist temp_branch.txt del temp_branch.txt >nul 2>&1
+git rev-parse --abbrev-ref HEAD > "%TMP_BRANCH%" 2>nul
+for /f "usebackq delims=" %%i in ("%TMP_BRANCH%") do set "current_branch=%%i"
+if exist "%TMP_BRANCH%" del "%TMP_BRANCH%"
 
 if "%current_branch%"=="" set "current_branch=main"
+if "%current_branch%"=="HEAD" (
+    echo.
+    echo [WARNING] Repository is in detached HEAD state. Cannot push automatically.
+    echo Please checkout a branch and push manually.
+    pause
+    exit /b 1
+)
 
 echo Status: Pushing to %current_branch%...
 git push origin %current_branch%
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [WARNING] Push failed. 
+    echo [WARNING] Push failed.
     echo Please push manually using: git push origin %current_branch%
     pause
     exit /b 1
