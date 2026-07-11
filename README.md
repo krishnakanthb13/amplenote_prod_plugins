@@ -50,3 +50,9 @@ Copyright (C) 2026 Krishna Kanth B
 
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
 - [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
+- [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
+[WARNING] PowerShell README update failed. Falling back to plain append.
+- [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite
+ 
+### Submodule History 
+- [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) 
