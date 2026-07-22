@@ -277,27 +277,24 @@ if %ERRORLEVEL% EQU 0 goto SKIP_README_APPEND
 :: This avoids: (1) CMD 8191-char line limit, (2) OneDrive file-lock on inline PS,
 :: (3) special-char quoting nightmares in the CMD shell.
 if "%powershell_available%"=="1" (
-    (
-        echo $p = 'README.md'
-        echo $name = [System.Environment]::GetEnvironmentVariable^('ENTRY_NAME'^)
-        echo $url  = [System.Environment]::GetEnvironmentVariable^('ENTRY_URL'^)
-        echo $date = Get-Date -Format 'dd-MM-yyyy'
-        echo $entry = '- [' + $name + ']^(' + $url + '^) added on ' + $date
-        echo $lines = @^(Get-Content -LiteralPath $p -Encoding UTF8^)
-        echo $m = $lines ^| Select-String -SimpleMatch '### Submodule History' ^| Select-Object -First 1
-        echo if ^($m^) {
-        echo     $i = $m.LineNumber
-        echo     $out = @^(^)
-        echo     if ^($i -gt 0^) { $out += $lines[0..^($i-1^)] }
-        echo     $out += $entry
-        echo     if ^($i -lt $lines.Count^) { $out += $lines[$i..^($lines.Count-1^)] }
-        echo     Set-Content -LiteralPath $p -Value $out -Encoding UTF8
-        echo } else {
-        echo     Add-Content -LiteralPath $p -Value $entry -Encoding UTF8
-        echo }
-    ) > "%TMP_PS%"
     set "ENTRY_NAME=%repo_name%"
     set "ENTRY_URL=%repo_url%"
+    (
+        echo $p = 'README.md'
+        echo $name = $env:ENTRY_NAME
+        echo $url  = $env:ENTRY_URL
+        echo $date = Get-Date -Format 'dd-MM-yyyy'
+        echo $entry = '- [' + $name + '](' + $url + ') added on ' + $date
+        echo $content = Get-Content -LiteralPath $p -Raw -Encoding UTF8
+        echo $target = '### Submodule History'
+        echo if ^($content.Contains^($target^)^) {
+        echo     $replacement = $target + "`r`n" + $entry
+        echo     $newContent = $content.Replace^($target, $replacement^)
+        echo     Set-Content -LiteralPath $p -Value $newContent -Encoding UTF8 -NoNewline
+        echo } else {
+        echo     Add-Content -LiteralPath $p -Value ^("`r`n" + $target + "`r`n" + $entry^) -Encoding UTF8
+        echo }
+    ) > "%TMP_PS%"
     powershell -NoProfile -ExecutionPolicy Bypass -File "%TMP_PS%"
     if %ERRORLEVEL% NEQ 0 (
         echo [WARNING] PowerShell README update failed. Falling back to plain append.

@@ -7,3 +7,6 @@
 [submodule "anp-21-dice-lite"]
 	path = anp-21-dice-lite
 	url = https://github.com/krishnakanthb13/anp-21-dice-lite
+[submodule "anp-02-metadata"]
+	path = anp-02-metadata
+	url = https://github.com/krishnakanthb13/anp-02-metadata
