@@ -284,7 +284,7 @@ if "%powershell_available%"=="1" (
         echo $name = $env:ENTRY_NAME
         echo $url  = $env:ENTRY_URL
         echo $date = Get-Date -Format 'dd-MM-yyyy'
-        echo $entry = '- [' + $name + '](' + $url + ') added on ' + $date
+        echo $entry = '- [' + $name + ']^(' + $url + '^) added on ' + $date
         echo $content = Get-Content -LiteralPath $p -Raw -Encoding UTF8
         echo $target = '### Submodule History'
         echo if ^($content.Contains^($target^)^) {

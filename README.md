@@ -1,4 +1,4 @@
-﻿# Amplenote Production Plugins
+# Amplenote Production Plugins
 
 A collection of finished **Amplenote Plugins** plus the build tooling used to bundle them.
 Each plugin is written as modular ESM (split across `lib/`), then compiled by a custom `esbuild` configuration into a single "Raw Object Literal" wrapped in an IIFE — the format Amplenote requires (`(() => { return { ... } })()`).
@@ -51,16 +51,14 @@ Copyright (C) 2026 Krishna Kanth B
 - [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
 - [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026
 - [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
+- [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
 - [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
 
 ### Submodule History
-- [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026 
+- [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026
 - [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
 - [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
 - [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
 - [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026
-[WARNING] PowerShell README update failed. Falling back to plain append.
-- [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban
-- [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) 
