@@ -13,3 +13,6 @@
 [submodule "anp-09-graph-utility"]
 	path = anp-09-graph-utility
 	url = https://github.com/krishnakanthb13/anp-09-graph-utility
+[submodule "anp-15-kanban"]
+	path = anp-15-kanban
+	url = https://github.com/krishnakanthb13/anp-15-kanban
