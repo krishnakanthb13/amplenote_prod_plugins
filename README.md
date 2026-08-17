@@ -50,12 +50,13 @@ Copyright (C) 2026 Krishna Kanth B
 
 - [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
 - [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026
+- [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
 - [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
 
 ### Submodule History 
+- [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
 - [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
 - [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
 - [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026
-

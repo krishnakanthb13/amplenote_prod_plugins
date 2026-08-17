@@ -10,3 +10,6 @@
 [submodule "anp-02-metadata"]
 	path = anp-02-metadata
 	url = https://github.com/krishnakanthb13/anp-02-metadata
+[submodule "anp-09-graph-utility"]
+	path = anp-09-graph-utility
+	url = https://github.com/krishnakanthb13/anp-09-graph-utility
