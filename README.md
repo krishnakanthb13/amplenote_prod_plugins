@@ -56,6 +56,7 @@ Plugins are maintained as independent public repositories and linked here as sub
 | `anp-15-kanban` | https://github.com/krishnakanthb13/anp-15-kanban |
 | `anp-19-dice` | https://github.com/krishnakanthb13/anp-19-dice |
 | `anp-21-dice-lite` | https://github.com/krishnakanthb13/anp-21-dice-lite |
+| `anp-22-habit-streak` | https://github.com/krishnakanthb13/anp-22-habit-streak |
 
 To pull the latest changes for **all** submodules at once:
 ```bash
@@ -63,6 +64,7 @@ git submodule update --remote --merge
 ```
 
 ### Submodule History
+- [anp-22-habit-streak](https://github.com/krishnakanthb13/anp-22-habit-streak) added on 19-08-2026
 - [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026
 - [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
 - [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026

@@ -16,3 +16,6 @@
 [submodule "anp-15-kanban"]
 	path = anp-15-kanban
 	url = https://github.com/krishnakanthb13/anp-15-kanban
+[submodule "anp-22-habit-streak"]
+	path = anp-22-habit-streak
+	url = https://github.com/krishnakanthb13/anp-22-habit-streak
