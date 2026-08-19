@@ -2,7 +2,7 @@
 setlocal
 
 :: ============================================================================
-:: REPO MANAGEMENT SOURCE OF TRUTH (V11 - PS Check Fix + Fallback Hardening)
+:: REPO MANAGEMENT SOURCE OF TRUTH (V12 - README Submodules Table & History Fix)
 :: ============================================================================
 :: Changes from V9:
 ::  - All temp files moved to %TEMP% (prevents OneDrive sync lock)
@@ -21,9 +21,10 @@ setlocal
 ::  - V11: URL validation findstr quote-parse bug fixed (^" caused >nul to be treated as filename)
 ::  - V11: --recursive scoped to new submodule (initializes nested submodules safely)
 ::  - V11: README fallback section guard added
+::  - V12: Updates both the Submodules table (in sorted order) and Submodule History; avoids CMD escaping issues
 
 echo ========================================
-echo   GitHub Submodule Setup Utility (V11)
+echo   GitHub Submodule Setup Utility (V12)
 echo ========================================
 
 :: --- DEFINE TEMP FILE PATHS (in %TEMP% so OneDrive never touches them) ---
@@ -261,53 +262,97 @@ if %ERRORLEVEL% NEQ 0 (
 echo.
 echo Status: Updating documentation...
 if not exist README.md (
-    echo # Project Overview > README.md
-    echo This is a private repository containing public submodules. >> README.md
+    echo # Amplenote Plugin Manager ^& Staging Environment > README.md
     echo. >> README.md
     echo ## Submodules >> README.md
+    echo. >> README.md
+    echo Plugins are maintained as independent public repositories and linked here as submodules: >> README.md
+    echo. >> README.md
+    echo ^| Submodule ^| Repository ^| >> README.md
+    echo ^| :--- ^| :--- ^| >> README.md
     echo. >> README.md
     echo ### Submodule History >> README.md
 )
 
-:: Check for duplicate using exact URL match (avoids substring collision e.g. repo vs repo2)
-findstr /C:"%repo_url%" README.md >nul
-if %ERRORLEVEL% EQU 0 goto SKIP_README_APPEND
-
-:: Write the README update logic to a .ps1 helper file.
-:: This avoids: (1) CMD 8191-char line limit, (2) OneDrive file-lock on inline PS,
-:: (3) special-char quoting nightmares in the CMD shell.
 if "%powershell_available%"=="1" (
     set "ENTRY_NAME=%repo_name%"
     set "ENTRY_URL=%repo_url%"
-    (
-        echo $p = 'README.md'
-        echo $name = $env:ENTRY_NAME
-        echo $url  = $env:ENTRY_URL
-        echo $date = Get-Date -Format 'dd-MM-yyyy'
-        echo $entry = '- [' + $name + ']^(' + $url + '^) added on ' + $date
-        echo $content = Get-Content -LiteralPath $p -Raw -Encoding UTF8
-        echo $target = '### Submodule History'
-        echo if ^($content.Contains^($target^)^) {
-        echo     $replacement = $target + "`r`n" + $entry
-        echo     $newContent = $content.Replace^($target, $replacement^)
-        echo     Set-Content -LiteralPath $p -Value $newContent -Encoding UTF8 -NoNewline
-        echo } else {
-        echo     Add-Content -LiteralPath $p -Value ^("`r`n" + $target + "`r`n" + $entry^) -Encoding UTF8
-        echo }
-    ) > "%TMP_PS%"
+    if exist "%TMP_PS%" del "%TMP_PS%" >nul 2>&1
+    echo $p = 'README.md' >> "%TMP_PS%"
+    echo $name = $env:ENTRY_NAME >> "%TMP_PS%"
+    echo $url = $env:ENTRY_URL >> "%TMP_PS%"
+    echo $date = Get-Date -Format 'dd-MM-yyyy' >> "%TMP_PS%"
+    echo if (-not (Test-Path $p)) { exit 0 } >> "%TMP_PS%"
+    echo $fullPath = (Resolve-Path $p).Path >> "%TMP_PS%"
+    echo $content = [System.IO.File]::ReadAllText($fullPath, [System.Text.Encoding]::UTF8) >> "%TMP_PS%"
+    echo $nl = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" } >> "%TMP_PS%"
+    echo $pipe = [char]124 >> "%TMP_PS%"
+    echo $bt = [char]96 >> "%TMP_PS%"
+    echo $tableRow = "$pipe $bt$name$bt $pipe $url $pipe" >> "%TMP_PS%"
+    echo $tableHeader = "$pipe Submodule $pipe Repository $pipe" >> "%TMP_PS%"
+    echo if (-not $content.Contains($url)) { >> "%TMP_PS%"
+    echo     $lines = $content -split '\r?\n' >> "%TMP_PS%"
+    echo     $newLines = New-Object System.Collections.Generic.List[string] >> "%TMP_PS%"
+    echo     $tableFound = $false >> "%TMP_PS%"
+    echo     $inserted = $false >> "%TMP_PS%"
+    echo     for ($i = 0; $i -lt $lines.Count; $i++) { >> "%TMP_PS%"
+    echo         $line = $lines[$i] >> "%TMP_PS%"
+    echo         if ($line.Trim() -eq $tableHeader) { >> "%TMP_PS%"
+    echo             $tableFound = $true >> "%TMP_PS%"
+    echo             $newLines.Add($line) >> "%TMP_PS%"
+    echo             continue >> "%TMP_PS%"
+    echo         } >> "%TMP_PS%"
+    echo         if ($tableFound -and (-not $inserted) -and $line.StartsWith("$pipe")) { >> "%TMP_PS%"
+    echo             if ($line.Contains("---")) { >> "%TMP_PS%"
+    echo                 $newLines.Add($line) >> "%TMP_PS%"
+    echo                 continue >> "%TMP_PS%"
+    echo             } >> "%TMP_PS%"
+    echo             $parts = $line.Split($pipe) >> "%TMP_PS%"
+    echo             $currName = if ($parts.Length -ge 3) { $parts[1].Replace("$bt","").Trim() } else { "" } >> "%TMP_PS%"
+    echo             $isPlugin = $name.StartsWith("anp-") >> "%TMP_PS%"
+    echo             $currIsPlugin = $currName.StartsWith("anp-") >> "%TMP_PS%"
+    echo             if ($isPlugin -and $currIsPlugin -and ($name -lt $currName)) { >> "%TMP_PS%"
+    echo                 $newLines.Add($tableRow) >> "%TMP_PS%"
+    echo                 $inserted = $true >> "%TMP_PS%"
+    echo             } elseif ($isPlugin -and (-not $currIsPlugin)) { >> "%TMP_PS%"
+    echo                 $newLines.Add($tableRow) >> "%TMP_PS%"
+    echo                 $inserted = $true >> "%TMP_PS%"
+    echo             } elseif ((-not $isPlugin) -and (-not $currIsPlugin) -and ($name -lt $currName)) { >> "%TMP_PS%"
+    echo                 $newLines.Add($tableRow) >> "%TMP_PS%"
+    echo                 $inserted = $true >> "%TMP_PS%"
+    echo             } >> "%TMP_PS%"
+    echo         } elseif ($tableFound -and (-not $inserted) -and (-not $line.StartsWith("$pipe"))) { >> "%TMP_PS%"
+    echo             $newLines.Add($tableRow) >> "%TMP_PS%"
+    echo             $inserted = $true >> "%TMP_PS%"
+    echo             $tableFound = $false >> "%TMP_PS%"
+    echo         } >> "%TMP_PS%"
+    echo         $newLines.Add($line) >> "%TMP_PS%"
+    echo     } >> "%TMP_PS%"
+    echo     if ($tableFound -and (-not $inserted)) { >> "%TMP_PS%"
+    echo         $newLines.Add($tableRow) >> "%TMP_PS%"
+    echo     } >> "%TMP_PS%"
+    echo     $content = $newLines -join $nl >> "%TMP_PS%"
+    echo } >> "%TMP_PS%"
+    echo $historyEntry = "- [$name]($url) added on $date" >> "%TMP_PS%"
+    echo $historyHeader = '### Submodule History' >> "%TMP_PS%"
+    echo if (-not $content.Contains("- [$name]")) { >> "%TMP_PS%"
+    echo     if ($content.Contains($historyHeader)) { >> "%TMP_PS%"
+    echo         $idx = $content.IndexOf($historyHeader) >> "%TMP_PS%"
+    echo         $afterHeader = $idx + $historyHeader.Length >> "%TMP_PS%"
+    echo         $content = $content.Substring(0, $afterHeader) + $nl + $historyEntry + $content.Substring($afterHeader) >> "%TMP_PS%"
+    echo     } else { >> "%TMP_PS%"
+    echo         $content = $content.TrimEnd() + $nl + $nl + $historyHeader + $nl + $historyEntry + $nl >> "%TMP_PS%"
+    echo     } >> "%TMP_PS%"
+    echo } >> "%TMP_PS%"
+    echo $utf8NoBom = New-Object System.Text.UTF8Encoding($false) >> "%TMP_PS%"
+    echo [System.IO.File]::WriteAllText($fullPath, $content, $utf8NoBom) >> "%TMP_PS%"
     powershell -NoProfile -ExecutionPolicy Bypass -File "%TMP_PS%"
     if %ERRORLEVEL% NEQ 0 (
-        echo [WARNING] PowerShell README update failed. Falling back to plain append.
-        findstr /C:"### Submodule History" README.md >nul 2>&1
-        if %ERRORLEVEL% NEQ 0 (
-            echo. >> README.md
-            echo ### Submodule History >> README.md
-        )
-        echo - [%repo_name%](%repo_url%) >> README.md
+        echo [WARNING] PowerShell README update failed.
     ) else (
         echo Status: Updated README.md
     )
-    if exist "%TMP_PS%" del "%TMP_PS%"
+    if exist "%TMP_PS%" del "%TMP_PS%" >nul 2>&1
 ) else (
     echo [WARNING] PowerShell not available. Appending link to README.md.
     findstr /C:"### Submodule History" README.md >nul 2>&1
@@ -323,11 +368,6 @@ findstr /C:"%repo_url%" README.md >nul
 if %ERRORLEVEL% NEQ 0 (
     echo [WARNING] Could not verify README.md was updated. Please check it manually.
 )
-
-goto POST_README
-:SKIP_README_APPEND
-echo Status: README.md already contains this repo. Skipping append.
-:POST_README
 
 :: --- GIT COMMIT ---
 echo Status: Staging files...

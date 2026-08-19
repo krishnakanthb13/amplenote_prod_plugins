@@ -1,9 +1,9 @@
 # Amplenote Production Plugins
 
 A collection of finished **Amplenote Plugins** plus the build tooling used to bundle them.
-Each plugin is written as modular ESM (split across `lib/`), then compiled by a custom `esbuild` configuration into a single "Raw Object Literal" wrapped in an IIFE — the format Amplenote requires (`(() => { return { ... } })()`).
+Each plugin is written as modular ESM (split across `lib/`), then compiled by a custom `esbuild` configuration into a single "Raw Object Literal" wrapped in an IIFE - the format Amplenote requires (`(() => { return { ... } })()`).
 
-This is the production repository. Plugins are vendored here as plain directories (`anp-*`); their development history and per-plugin docs live in their own repositories.
+This is the production repository. Plugins are maintained as public repositories and linked here as submodules (`anp-*`).
 
 ## Features
 
@@ -13,7 +13,7 @@ This is the production repository. Plugins are vendored here as plain directorie
 
 ## Installation
 
-1. Clone this repo.
+1. Clone this repo (use `--recurse-submodules` to pull plugin submodules).
 2. Run `npm install` to set up dependencies.
 3. (Optional) Configure the default plugin ID in `esbuild.js`, or pass it via CLI.
 
@@ -44,21 +44,28 @@ The bundler produces a clean, readable, single-file object expression in `[plugi
 GPL v3 - See [LICENSE](LICENSE) for details.
 Copyright (C) 2026 Krishna Kanth B
 
----
+## Submodules
 
-## Plugins 
+Plugins are maintained as independent public repositories and linked here as submodules:
 
-- [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
-- [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026
-- [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
-- [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026
-- [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
-- [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
+| Submodule | Repository |
+| :--- | :--- |
+| `anp-01-timestamp` | https://github.com/krishnakanthb13/anp-01-timestamp |
+| `anp-02-metadata` | https://github.com/krishnakanthb13/anp-02-metadata |
+| `anp-09-graph-utility` | https://github.com/krishnakanthb13/anp-09-graph-utility |
+| `anp-15-kanban` | https://github.com/krishnakanthb13/anp-15-kanban |
+| `anp-19-dice` | https://github.com/krishnakanthb13/anp-19-dice |
+| `anp-21-dice-lite` | https://github.com/krishnakanthb13/anp-21-dice-lite |
+
+To pull the latest changes for **all** submodules at once:
+```bash
+git submodule update --remote --merge
+```
 
 ### Submodule History
 - [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026
 - [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026
+- [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026
+- [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
 - [anp-19-dice](https://github.com/krishnakanthb13/anp-19-dice) added on 04-07-2026
 - [anp-01-timestamp](https://github.com/krishnakanthb13/anp-01-timestamp) added on 04-07-2026
-- [anp-21-dice-lite](https://github.com/krishnakanthb13/anp-21-dice-lite) added on 11-07-2026
-- [anp-02-metadata](https://github.com/krishnakanthb13/anp-02-metadata) added on 22-07-2026

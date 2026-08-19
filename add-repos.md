@@ -15,14 +15,14 @@ We provide a utility script `add-repos.bat` (Windows) to handle the entire lifec
 ### What the script does:
 
 #### For Option 1 (Link a new public repository):
-1. **Validates Environment**: Verifies that the script is run from within a valid Git repository work tree, Git is installed, and PowerShell v3+ is available.
+1. **Validates Environment**: Verifies that the script is run from within a valid Git repository work tree, Git is installed, and PowerShell is available.
 2. **Input Validation**: Ensures the URL entered is a valid HTTPS GitHub repository URL.
 3. **Sanitizes**: It checks for and removes any "zombie" Git data from previous failed attempts or existing links. It removes stale sections from `.gitmodules`, `.git/config`, internal history from `.git/modules/%repo_name%`, and the physical directory. On Windows, it strips read-only attributes with `attrib -R` before deleting.
 4. **Pre-flight check & Suppresses Credentials**: It runs `git ls-remote` with credential prompts disabled (`GIT_TERMINAL_PROMPT=0`) to verify the remote is reachable *before* making any changes. If the repo is unreachable (private, non-existent, or blocked by network/credentials) it stops early with a clear message instead of failing halfway.
 5. **Auto-seeds empty repos**: If the remote exists but is **empty** (no commits yet, detected via lack of a HEAD reference), it automatically creates and pushes an initial `README.md` commit on `main`. A submodule must point at a commit, so this prevents the classic *"branch yet to be born / unable to checkout submodule"* failure.
 6. **Submodules**: It runs `git submodule add` to link the remote code to a local folder. If the submodule is already registered in `.gitmodules` but missing from the Git index, it force-registers it instead of aborting. After adding, it runs `git submodule update --init --recursive -- <repo>` — scoped to only the new repo so nested submodules are also initialized without touching any other submodule in the workspace.
-7. **Documents**: It automatically appends the link and date to the [Submodules](#submodules) section of `README.md` using a temporary PowerShell helper script (`%TEMP%\anp_submod_readme.ps1`). Running from the `%TEMP%` directory prevents file locks during OneDrive sync cycles. Both the PowerShell path and the plain-text fallback path verify the `### Submodule History` section exists before appending, so entries never land at an arbitrary position in the file.
-8. **Commits**: It creates a git commit with a standard message. If there is nothing new to commit (submodule was already staged from a previous run), it emits a warning and still attempts the push.
+7. **Documents**: It automatically updates **both** the markdown `## Submodules` table (inserting the submodule in sorted order with `anp-*` plugins first followed by reference/docs repos) and the `### Submodule History` list in `README.md` using a temporary PowerShell helper script (`%TEMP%\anp_submod_readme.ps1`). Running from the `%TEMP%` directory prevents file locks during OneDrive sync cycles, and avoids CMD batch escaping conflicts while preserving clean UTF-8 encoding.
+8. **Commits**: It creates a git commit with a standard message (`Added public submodule: <repo> and updated README`). If there is nothing new to commit (submodule was already staged from a previous run), it emits a warning and still attempts the push.
 9. **Pushes**: It automatically pushes the changes to your current active branch, after verifying the repository is not in a detached HEAD state.
 
 #### For Option 2 (Update existing submodules):
@@ -95,14 +95,14 @@ The script returns the following exit codes:
 | Empty repo "branch unborn" failures | Auto-detects remote HEAD absence and auto-seeds with a README |
 | Staging unrelated files | Selective staging (`git add -u` or specific staging) |
 | Push to wrong branch in detached HEAD | Safely detects detached HEAD and aborts before pushing |
-| No documentation updates | Auto-updates README history using temporary helper scripts to avoid OneDrive lockups |
+| No documentation updates | Auto-updates both README Submodules table (sorted) and chronological History |
 | No pre-flight checks | Validates remote repo exists and is reachable first |
 | Windows `rmdir` failing on read-only `.git` files | Strips attributes with `attrib -R` first |
 | Abort when submodule exists locally but not in index | Detects and force-registers automatically |
 | Abort on `git commit` exit code 1 (nothing to commit) | Treats as non-fatal warning, still pushes |
 | Git command hanging on authentication prompts | Disables interactive prompts (`GIT_TERMINAL_PROMPT=0`) |
 | Nested submodules not initialized | Scoped `--recursive` initializes them without touching unrelated submodules |
-| README entries appended to wrong location | Section guard ensures `### Submodule History` exists before any append |
+| Incomplete/misaligned table and history | Seamlessly updates the markdown table and prepends to history with section guards |
 
 ### Key Design Choices & Strengths:
 1. **Robust error handling** - Every Git operation has explicit error checking.
@@ -113,7 +113,7 @@ The script returns the following exit codes:
 6. **Windows read-only file handling** - Strips `.git` read-only locks with `attrib -R` before any folder deletion, preventing silent partial-delete failures.
 7. **Orphaned submodule recovery** - Detects when a submodule folder exists locally but is absent from the Git index, and recovers automatically without re-cloning.
 8. **Nested submodule support** - Uses `git submodule update --init --recursive -- <repo>` scoped to just the newly added path, so any submodules inside it are also initialized without risking errors from unrelated submodules elsewhere in the workspace.
-9. **README section guard** - Fallback append paths (PowerShell failure or PowerShell unavailable) explicitly create the `### Submodule History` section if it is missing, ensuring entries always land in the right place.
+9. **Dual Markdown synchronization** - Updates both the main Submodules markdown table (preserving alphabetical order for `anp-*` plugins followed by reference/docs repos) and the chronological Submodule History list without formatting errors, batch escaping bugs, or UTF-8 BOM encoding issues.
 
 ### Future CI/CD Integration Example:
 If you wish to schedule weekly automated updates in GitHub Actions:
@@ -132,4 +132,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
 
