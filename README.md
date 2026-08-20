@@ -57,6 +57,7 @@ Plugins are maintained as independent public repositories and linked here as sub
 | `anp-19-dice` | https://github.com/krishnakanthb13/anp-19-dice |
 | `anp-21-dice-lite` | https://github.com/krishnakanthb13/anp-21-dice-lite |
 | `anp-22-habit-streak` | https://github.com/krishnakanthb13/anp-22-habit-streak |
+| `anp-23-grammar-reviewer` | https://github.com/krishnakanthb13/anp-23-grammar-reviewer |
 
 To pull the latest changes for **all** submodules at once:
 ```bash
@@ -64,6 +65,7 @@ git submodule update --remote --merge
 ```
 
 ### Submodule History
+- [anp-23-grammar-reviewer](https://github.com/krishnakanthb13/anp-23-grammar-reviewer) added on 20-08-2026
 - [anp-22-habit-streak](https://github.com/krishnakanthb13/anp-22-habit-streak) added on 19-08-2026
 - [anp-15-kanban](https://github.com/krishnakanthb13/anp-15-kanban) added on 17-08-2026
 - [anp-09-graph-utility](https://github.com/krishnakanthb13/anp-09-graph-utility) added on 17-08-2026

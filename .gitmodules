@@ -19,3 +19,6 @@
 [submodule "anp-22-habit-streak"]
 	path = anp-22-habit-streak
 	url = https://github.com/krishnakanthb13/anp-22-habit-streak
+[submodule "anp-23-grammar-reviewer"]
+	path = anp-23-grammar-reviewer
+	url = https://github.com/krishnakanthb13/anp-23-grammar-reviewer
