@@ -25,3 +25,6 @@
 [submodule "anp-24-image-compressor"]
 	path = anp-24-image-compressor
 	url = https://github.com/krishnakanthb13/anp-24-image-compressor
+[submodule "anp-25-zotero"]
+	path = anp-25-zotero
+	url = https://github.com/krishnakanthb13/anp-25-zotero

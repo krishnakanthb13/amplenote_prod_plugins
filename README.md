@@ -59,6 +59,7 @@ Plugins are maintained as independent public repositories and linked here as sub
 | `anp-22-habit-streak` | https://github.com/krishnakanthb13/anp-22-habit-streak |
 | `anp-23-grammar-reviewer` | https://github.com/krishnakanthb13/anp-23-grammar-reviewer |
 | `anp-24-image-compressor` | https://github.com/krishnakanthb13/anp-24-image-compressor |
+| `anp-25-zotero` | https://github.com/krishnakanthb13/anp-25-zotero |
 
 To pull the latest changes for **all** submodules at once:
 ```bash
@@ -66,6 +67,7 @@ git submodule update --remote --merge
 ```
 
 ### Submodule History
+- [anp-25-zotero](https://github.com/krishnakanthb13/anp-25-zotero) added on 01-09-2026
 - [anp-24-image-compressor](https://github.com/krishnakanthb13/anp-24-image-compressor) added on 01-09-2026
 - [anp-23-grammar-reviewer](https://github.com/krishnakanthb13/anp-23-grammar-reviewer) added on 20-08-2026
 - [anp-22-habit-streak](https://github.com/krishnakanthb13/anp-22-habit-streak) added on 19-08-2026
