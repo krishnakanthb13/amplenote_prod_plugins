@@ -22,3 +22,6 @@
 [submodule "anp-23-grammar-reviewer"]
 	path = anp-23-grammar-reviewer
 	url = https://github.com/krishnakanthb13/anp-23-grammar-reviewer
+[submodule "anp-24-image-compressor"]
+	path = anp-24-image-compressor
+	url = https://github.com/krishnakanthb13/anp-24-image-compressor
