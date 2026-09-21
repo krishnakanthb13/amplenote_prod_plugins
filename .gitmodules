@@ -28,3 +28,6 @@
 [submodule "anp-25-zotero"]
 	path = anp-25-zotero
 	url = https://github.com/krishnakanthb13/anp-25-zotero
+[submodule "anp-26-hemmingway"]
+	path = anp-26-hemmingway
+	url = https://github.com/krishnakanthb13/anp-26-hemmingway
