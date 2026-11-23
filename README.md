@@ -61,6 +61,7 @@ Plugins are maintained as independent public repositories and linked here as sub
 | `anp-24-image-compressor` | https://github.com/krishnakanthb13/anp-24-image-compressor |
 | `anp-25-zotero` | https://github.com/krishnakanthb13/anp-25-zotero |
 | `anp-26-hemmingway` | https://github.com/krishnakanthb13/anp-26-hemmingway |
+| `anp-29-cat-facts` | https://github.com/krishnakanthb13/anp-29-cat-facts |
 
 To pull the latest changes for **all** submodules at once:
 ```bash
@@ -68,6 +69,7 @@ git submodule update --remote --merge
 ```
 
 ### Submodule History
+- [anp-29-cat-facts](https://github.com/krishnakanthb13/anp-29-cat-facts) added on 23-11-2026
 - [anp-26-hemmingway](https://github.com/krishnakanthb13/anp-26-hemmingway) added on 21-09-2026
 - [anp-25-zotero](https://github.com/krishnakanthb13/anp-25-zotero) added on 01-09-2026
 - [anp-24-image-compressor](https://github.com/krishnakanthb13/anp-24-image-compressor) added on 01-09-2026

@@ -31,3 +31,6 @@
 [submodule "anp-26-hemmingway"]
 	path = anp-26-hemmingway
 	url = https://github.com/krishnakanthb13/anp-26-hemmingway
+[submodule "anp-29-cat-facts"]
+	path = anp-29-cat-facts
+	url = https://github.com/krishnakanthb13/anp-29-cat-facts
