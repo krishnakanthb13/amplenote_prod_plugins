@@ -34,3 +34,6 @@
 [submodule "anp-29-cat-facts"]
 	path = anp-29-cat-facts
 	url = https://github.com/krishnakanthb13/anp-29-cat-facts
+[submodule "anp-13-header-collapse"]
+	path = anp-13-header-collapse
+	url = https://github.com/krishnakanthb13/anp-13-header-collapse

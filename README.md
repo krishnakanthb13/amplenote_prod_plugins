@@ -53,6 +53,7 @@ Plugins are maintained as independent public repositories and linked here as sub
 | `anp-01-timestamp` | https://github.com/krishnakanthb13/anp-01-timestamp |
 | `anp-02-metadata` | https://github.com/krishnakanthb13/anp-02-metadata |
 | `anp-09-graph-utility` | https://github.com/krishnakanthb13/anp-09-graph-utility |
+| `anp-13-header-collapse` | https://github.com/krishnakanthb13/anp-13-header-collapse |
 | `anp-15-kanban` | https://github.com/krishnakanthb13/anp-15-kanban |
 | `anp-19-dice` | https://github.com/krishnakanthb13/anp-19-dice |
 | `anp-21-dice-lite` | https://github.com/krishnakanthb13/anp-21-dice-lite |
@@ -69,6 +70,7 @@ git submodule update --remote --merge
 ```
 
 ### Submodule History
+- [anp-13-header-collapse](https://github.com/krishnakanthb13/anp-13-header-collapse) added on 24-11-2026
 - [anp-29-cat-facts](https://github.com/krishnakanthb13/anp-29-cat-facts) added on 23-11-2026
 - [anp-26-hemmingway](https://github.com/krishnakanthb13/anp-26-hemmingway) added on 21-09-2026
 - [anp-25-zotero](https://github.com/krishnakanthb13/anp-25-zotero) added on 01-09-2026
